@@ -1,6 +1,9 @@
-def main():
-    print("Hello from trackflow!")
+from fastapi import FastAPI, status
 
 
-if __name__ == "__main__":
-    main()
+app = FastAPI()
+
+
+@app.get("/", status_code=status.HTTP_200_OK)
+async def root():
+    return {"Hello": "world!"}
