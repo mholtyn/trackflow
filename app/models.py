@@ -49,12 +49,8 @@ class User(Base):
     user_type: Mapped[UserType] = mapped_column(SAEnum(UserType, name="usertype_enums"), nullable=False)
     producer_profile: Mapped["ProducerProfile" | None] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
     labelstaff_profile: Mapped["LabelStaffProfile" | None] = relationship(back_populates="user")
-
-
-    tracks: Mapped[list["Track"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    memberships: Mapped[list["Membership"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    
     submissions: Mapped[list["Submission"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    submission_events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="user", cascade="all, delete-orphan")
 
 
 class ProducerProfile(Base):
@@ -71,6 +67,10 @@ class ProducerProfile(Base):
 
     user: Mapped["User"] = relationship(back_populates="producer_profile")
 
+    tracks: Mapped[list["Track"]] = relationship(back_populates="producer", cascade="all, delete-orphan")
+    submission_events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="producer")
+    submissions: Mapped[list["Submission"]] = relationship(back_populates="producer")
+
 
 class LabelStaffProfile(Base):
     __tablename__ = "labelstaff_profiles"
@@ -85,12 +85,15 @@ class LabelStaffProfile(Base):
 
     user: Mapped["User"] = relationship(back_populates="labelstaff_profile")
 
+    memberships: Mapped[list["Membership"]] = relationship(back_populates="labelstaff", cascade="all, delete-orphan")
+    submission_events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="labelstaff")
+
 
 class Track(Base):
     __tablename__ = "tracks"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    producer_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("producer_profiles.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     streaming_url: Mapped[str] = mapped_column(Text, nullable=False)
     tempo: Mapped[float] = mapped_column(Float, index=True, nullable=False)
@@ -98,7 +101,7 @@ class Track(Base):
     key: Mapped[str | None] = mapped_column(String(3), index=True)
     extra_metadata: Mapped[dict] = mapped_column(JSONB)
 
-    user: Mapped[User] = relationship(back_populates="tracks")
+    producer: Mapped["ProducerProfile"] = relationship(back_populates="tracks")    
 
 
 class Workspace(Base):
@@ -109,16 +112,17 @@ class Workspace(Base):
     
     memberships: Mapped[list["Membership"]] = relationship(back_populates="workspace")
     submissions: Mapped[list["Submission"]] = relationship(back_populates="workspace")
+    submission_events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="workspace")
 
 
 class Membership(Base):
     __tablename__ = "memberships"
 
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    labelstaff_profile_id = Mapped[uuid.UUID] = mapped_column(ForeignKey("labelstaff_profiles.id"), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), primary_key=True)
     role: Mapped[LabelRole] = mapped_column(SAEnum(LabelRole, name="labelrole_enums"), nullable=False)
     
-    user: Mapped["User"] = relationship(back_populates="membership")
+    labelstaff = Mapped["LabelStaffProfile"] = relationship(back_populates="memberships")
     workspace: Mapped["Workspace"] = relationship(back_populates="membership")
 
 
@@ -126,8 +130,8 @@ class Submission(Base):
     __tablename__ = "submissions"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
-    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"))
+    producer_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("producer_profiles.id"), nullable=False)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(100), nullable=False)
     streaming_url: Mapped[str] = mapped_column(Text, nullable=False)
     tempo: Mapped[float] = mapped_column(Float, index=True, nullable=False)
@@ -135,7 +139,7 @@ class Submission(Base):
     key: Mapped[str | None] = mapped_column(String(3), index=True)
     extra_metadata: Mapped[dict] = mapped_column(JSONB)
 
-    user: Mapped["User"] = relationship(back_populates="submission")
+    producer: Mapped["ProducerProfile"] = relationship(back_populates="submissions")
     workspaces: Mapped["Workspace"] = relationship(back_populates="submissions")
     events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="submission")
 
@@ -146,8 +150,12 @@ class SubmissionEvent(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     status: Mapped[Status] = mapped_column(SAEnum(Status, name="status_enums"), nullable=False)
     event_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    submission_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("submissions.id"))
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+    submission_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("submissions.id"), nullable=False)
+    workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), nullable=False)
+    producer_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("producer_profiles.id"), nullable=True)
+    labelstaff_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("labelstaff_profiles.id"), nullable=True)
 
     submission: Mapped["Submission"] = relationship(back_populates="events")
-    user: Mapped["User"] = relationship(back_populates="submission_events")
+    workspace: Mapped["Workspace"] = relationship(back_populates="submission_events")
+    producer: Mapped["ProducerProfile"] = relationship(back_populates="submission_events")
+    labelstaff: Mapped["LabelStaffProfile"] = relationship(back_populates="submission_events")
