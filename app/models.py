@@ -1,9 +1,8 @@
-from datetime import datetime, date
-from typing import Optional
+from datetime import datetime
 from enum import Enum
 import uuid
 
-from sqlalchemy import String, Integer, DateTime, func, Float, ForeignKey, TIMESTAMP, Date, UUID, Text, ARRAY
+from sqlalchemy import String, DateTime, func, Float, ForeignKey, UUID, Text, ARRAY
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
@@ -42,6 +41,12 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     gender: Mapped[Gender | None] = mapped_column(SAEnum(Gender, name="gender_enums"))
 
+    tracks: Mapped[list["Track"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    producer_profil: Mapped["ProducerProfile"] = relationship(back_populates="user")
+    memberships: Mapped[list["Membership"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    submissions: Mapped[list["Submission"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+    submission_events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="user", cascade="all, delete-orphan")
+
 
 class ProducerProfile(Base):
     __tablename__ = "producer_profiles"
@@ -53,6 +58,8 @@ class ProducerProfile(Base):
     location: Mapped[str | None] = mapped_column(String(100))
     contact_email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     social_links: Mapped[dict | None] = mapped_column(JSONB)
+
+    user: Mapped["User"] = relationship(back_populates="producer_profil")
 
 
 class Track(Base):
@@ -67,6 +74,8 @@ class Track(Base):
     key: Mapped[str | None] = mapped_column(String(3), index=True)
     extra_metadata: Mapped[dict] = mapped_column(JSONB)
 
+    user: Mapped[User] = relationship(back_populates="tracks")
+
 
 class Workspace(Base):
     __tablename__ = "workspaces"
@@ -74,12 +83,20 @@ class Workspace(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     
+    memberships: Mapped[list["Membership"]] = relationship(back_populates="workspace")
+    submissions: Mapped[list["Submission"]] = relationship(back_populates="workspace")
+
 
 class Membership(Base):
+    __tablename__ = "memberships"
+
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), primary_key=True)
     role: Mapped[LabelRole] = mapped_column(SAEnum(LabelRole, name="labelrole_enums"), nullable=False)
     
+    user: Mapped["User"] = relationship(back_populates="membership")
+    workspace: Mapped["Workspace"] = relationship(back_populates="membership")
+
 
 class Submission(Base):
     __tablename__ = "submissions"
@@ -94,12 +111,19 @@ class Submission(Base):
     key: Mapped[str | None] = mapped_column(String(3), index=True)
     extra_metadata: Mapped[dict] = mapped_column(JSONB)
 
+    user: Mapped["User"] = relationship(back_populates="submission")
+    workspaces: Mapped["Workspace"] = relationship(back_populates="submissions")
+    events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="submission")
+
 
 class SubmissionEvent(Base):
     __tablename__ = "submission_events"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     status: Mapped[Status] = mapped_column(SAEnum(Status, name="status_enums"), nullable=False)
-    event_date: Mapped[date] = mapped_column(Date, server_default=func.now())
+    event_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     submission_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("submissions.id"))
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"))
+
+    submission: Mapped["Submission"] = relationship(back_populates="events")
+    user: Mapped["User"] = relationship(back_populates="submission_events")
