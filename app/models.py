@@ -21,6 +21,11 @@ class LabelRole(str, Enum):
     agent = "agent"
 
 
+class UserType(str, Enum):
+    producer = "producer"
+    label_staff = "label_staff"
+
+
 class Status(str, Enum):
     sent = "sent"
     pending = "pending"
@@ -41,8 +46,12 @@ class User(Base):
     last_name: Mapped[str] = mapped_column(String(50), nullable=False)
     gender: Mapped[Gender | None] = mapped_column(SAEnum(Gender, name="gender_enums"))
 
+    user_type: Mapped[UserType] = mapped_column(SAEnum(UserType, name="usertype_enums"), nullable=False)
+    producer_profile: Mapped["ProducerProfile" | None] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
+    labelstaff_profile: Mapped["LabelStaffProfile" | None] = relationship(back_populates="user")
+
+
     tracks: Mapped[list["Track"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-    producer_profil: Mapped["ProducerProfile"] = relationship(back_populates="user")
     memberships: Mapped[list["Membership"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     submissions: Mapped[list["Submission"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     submission_events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="user", cascade="all, delete-orphan")
@@ -51,7 +60,8 @@ class User(Base):
 class ProducerProfile(Base):
     __tablename__ = "producer_profiles"
 
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
     artist_name: Mapped[str] = mapped_column(String(100), nullable=False)
     music_genre: Mapped[list[str]] = mapped_column(ARRAY(String))
     bio: Mapped[str | None] = mapped_column(Text)
@@ -59,7 +69,21 @@ class ProducerProfile(Base):
     contact_email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
     social_links: Mapped[dict | None] = mapped_column(JSONB)
 
-    user: Mapped["User"] = relationship(back_populates="producer_profil")
+    user: Mapped["User"] = relationship(back_populates="producer_profile")
+
+
+class LabelStaffProfile(Base):
+    __tablename__ = "labelstaff_profiles"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
+    bio: Mapped[str | None] = mapped_column(Text)
+    location: Mapped[str | None] = mapped_column(String(100))
+    contact_email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)
+    social_links: Mapped[dict | None] = mapped_column(JSONB)
+    position: Mapped[str | None] = mapped_column(String(50))
+
+    user: Mapped["User"] = relationship(back_populates="labelstaff_profile")
 
 
 class Track(Base):
