@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 import uuid
+from typing import Optional
 
 from sqlalchemy import String, DateTime, func, Float, ForeignKey, UUID, Text, ARRAY
 from sqlalchemy import Enum as SAEnum
@@ -47,8 +48,8 @@ class User(Base):
     gender: Mapped[Gender | None] = mapped_column(SAEnum(Gender, name="gender_enums"))
 
     user_type: Mapped[UserType] = mapped_column(SAEnum(UserType, name="usertype_enums"), nullable=False)
-    producer_profile: Mapped["ProducerProfile" | None] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
-    labelstaff_profile: Mapped["LabelStaffProfile" | None] = relationship(back_populates="user")
+    producer_profile: Mapped[Optional["ProducerProfile"]] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
+    labelstaff_profile: Mapped[Optional["LabelStaffProfile"]] = relationship(back_populates="user")
     
 
 class ProducerProfile(Base):

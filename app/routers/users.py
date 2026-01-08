@@ -17,8 +17,8 @@ router = APIRouter(tags=["Users"])
 ph = PasswordHasher()
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserCreate)
-async def create_user(user: UserCreate, session: SessionDep) -> UserCreate:
+@router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserPublic)
+async def create_user(user: UserCreate, session: SessionDep) -> UserPublic:
     result_username = await session.execute(select(User).where(User.username == user.username))
     existing_username = result_username.scalars().first()
     
