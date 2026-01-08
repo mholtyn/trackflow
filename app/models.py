@@ -50,8 +50,6 @@ class User(Base):
     producer_profile: Mapped["ProducerProfile" | None] = relationship(back_populates="user", uselist=False, cascade="all, delete-orphan")
     labelstaff_profile: Mapped["LabelStaffProfile" | None] = relationship(back_populates="user")
     
-    submissions: Mapped[list["Submission"]] = relationship(back_populates="user", cascade="all, delete-orphan")
-
 
 class ProducerProfile(Base):
     __tablename__ = "producer_profiles"
@@ -118,12 +116,12 @@ class Workspace(Base):
 class Membership(Base):
     __tablename__ = "memberships"
 
-    labelstaff_profile_id = Mapped[uuid.UUID] = mapped_column(ForeignKey("labelstaff_profiles.id"), primary_key=True)
+    labelstaff_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("labelstaff_profiles.id"), primary_key=True)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), primary_key=True)
     role: Mapped[LabelRole] = mapped_column(SAEnum(LabelRole, name="labelrole_enums"), nullable=False)
     
-    labelstaff = Mapped["LabelStaffProfile"] = relationship(back_populates="memberships")
-    workspace: Mapped["Workspace"] = relationship(back_populates="membership")
+    labelstaff: Mapped["LabelStaffProfile"] = relationship(back_populates="memberships")
+    workspace: Mapped["Workspace"] = relationship(back_populates="memberships")
 
 
 class Submission(Base):
@@ -139,8 +137,10 @@ class Submission(Base):
     key: Mapped[str | None] = mapped_column(String(3), index=True)
     extra_metadata: Mapped[dict] = mapped_column(JSONB)
 
+    status: Mapped[Status] = mapped_column(SAEnum(Status, name="status_enums"), nullable=False)
+
     producer: Mapped["ProducerProfile"] = relationship(back_populates="submissions")
-    workspaces: Mapped["Workspace"] = relationship(back_populates="submissions")
+    workspace: Mapped["Workspace"] = relationship(back_populates="submissions")
     events: Mapped[list["SubmissionEvent"]] = relationship(back_populates="submission")
 
 
@@ -152,8 +152,8 @@ class SubmissionEvent(Base):
     event_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     submission_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("submissions.id"), nullable=False)
     workspace_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("workspaces.id"), nullable=False)
-    producer_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("producer_profiles.id"), nullable=True)
-    labelstaff_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("labelstaff_profiles.id"), nullable=True)
+    producer_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("producer_profiles.id"), nullable=True, index=True)
+    labelstaff_profile_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("labelstaff_profiles.id"), nullable=True, index=True)
 
     submission: Mapped["Submission"] = relationship(back_populates="events")
     workspace: Mapped["Workspace"] = relationship(back_populates="submission_events")
