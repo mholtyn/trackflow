@@ -7,10 +7,10 @@ import zxcvbn
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
-from app.schemas import UserCreate, UserPublic, Token
-from app.models import User
-from app.depedencies import SessionDep, CurrentUserDep
-from app.auth import generate_access_token
+from trackflow.app.schemas.schemas import UserCreate, UserPublic, Token
+from trackflow.app.models.models import User
+from app.depedencies import SessionDep, CurrentUserDep, UserServiceDep
+from trackflow.app.services.auth import generate_access_token
 
 
 router = APIRouter(tags=["Users"])
@@ -18,34 +18,8 @@ ph = PasswordHasher()
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserPublic)
-async def create_user(user: UserCreate, session: SessionDep) -> UserPublic:
-    result_username = await session.execute(select(User).where(User.username == user.username))
-    existing_username = result_username.scalars().first()
-    
-    if existing_username:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Username taken.")
-
-    if len(user.password) < 6:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password must contain at least 6 characters.")
-
-    if zxcvbn.zxcvbn(user.password)["score"] < 1:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password is too weak.")
-    
-    hashed_pwd = ph.hash(user.password)
-    
-    db_user = User(email=user.email,
-                   username=user.username,
-                   pwd_hash=hashed_pwd,
-                   first_name=user.first_name,
-                   last_name=user.last_name,
-                   gender=user.gender,
-                   user_type=user.user_type)
-    
-    session.add(db_user)
-    await session.commit()
-    await session.refresh(db_user)
-
-    return db_user
+async def register(user_data: UserCreate, service: UserServiceDep) -> UserPublic:
+    return await service.create_user(user_data) 
 
 
 @router.post("/token", status_code=status.HTTP_200_OK, response_model=Token)
@@ -74,3 +48,10 @@ async def read_user(session: SessionDep, current_user: CurrentUserDep) -> UserPu
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Could not find user.")
     
     return db_user
+
+
+#TODO: update labelstaff profile
+
+
+
+#TODO: update producer profile
