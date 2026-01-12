@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr
 
-from trackflow.app.models.models import Gender, LabelRole, UserType, Status
+from app.models.models import Gender, LabelRole, UserType, Status
 
 
 # -------------------- Users -----------------------------

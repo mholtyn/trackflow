@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import zxcvbn
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
@@ -14,6 +16,11 @@ class PasswordTooWeakError(Exception):
 
 class UsernameAlreadyTakenError(Exception):
     """Raise when username is taken."""
+    pass
+
+
+class AuthenticationError(Exception):
+    """Raise when authentication failed."""
     pass
 
 
@@ -46,7 +53,7 @@ class UserService:
 
     def _check_password_strength(self, password: str):
         if zxcvbn.zxcvbn(password)["score"] < 1:
-            raise PasswordTooWeakError
+            raise PasswordTooWeakError("Password too weak")
 
 
     async def _is_username_taken(self, username: str):
@@ -54,6 +61,23 @@ class UserService:
         existing_username = result.scalar_one_or_none()
 
         if existing_username:
-            raise UsernameAlreadyTakenError
+            raise UsernameAlreadyTakenError("Username taken")
+        
+    
+    async def authenticate_user(self, username: str, password: str) -> User:
+        result = await self.session.execute(select(User).where(User.username == username))
+        user = result.scalar_one_or_none()
+
+        if not user or not self.auth_service.verify_password(password, user.pwd_hash):
+            raise AuthenticationError("Authentication failed")
+        
+        return user
+    
+    
+    async def get_user_by_id(self, id: UUID) -> User:
+        result = await self.session.execute(select(User).where(User.id == id))
+        user = result.scalar_one_or_none()
+        return user
+
 
 

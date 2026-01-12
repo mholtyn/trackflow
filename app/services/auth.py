@@ -54,19 +54,3 @@ class AuthService:
             return payload
         except (jwt.exceptions.PyJWTError, ValueError, TypeError):
             raise InvalidTokenError
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
