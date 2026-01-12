@@ -4,9 +4,9 @@ from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 
-from app.schemas.schemas import UserCreate, UserPublic, Token
+from app.schemas.schemas import UserCreate, UserPublic, Token, LabelStaffProfileUpdate, LabelStaffProfilePublic, ProducerProfilePublic, ProducerProfileUpdate
 from app.depedencies import CurrentUserDep, UserServiceDep
-from app.services.users import AuthenticationError, PasswordTooWeakError, UsernameAlreadyTakenError
+from app.services.users import AuthenticationError, PasswordTooWeakError, UsernameAlreadyTakenError, LabelStaffProfileMissingError, ProducerProfileMissingError
 
 
 router = APIRouter(tags=["Users"])
@@ -38,8 +38,23 @@ async def read_user(current_user: CurrentUserDep) -> UserPublic:
     return current_user
 
 
-#TODO: update labelstaff profile
+@router.patch("/users/me/labelstaff_profile", status_code=status.HTTP_200_OK, response_model=LabelStaffProfilePublic)
+async def update_labelstaff_profile(profile_data: LabelStaffProfileUpdate,
+                                    current_user: CurrentUserDep,
+                                    user_service: UserServiceDep) -> LabelStaffProfilePublic:
+    try:
+        updated_profile = await user_service.update_labelstaff_profile(current_user.id, profile_data)
+        return updated_profile
+    except LabelStaffProfileMissingError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-
-#TODO: update producer profile
+@router.patch("/users/me/producer_profile", status_code=status.HTTP_200_OK, response_model=ProducerProfilePublic)
+async def update_producer_profile(profile_data: ProducerProfileUpdate,
+                                  current_user: CurrentUserDep,
+                                  user_service: UserServiceDep) -> ProducerProfilePublic:
+    try:
+        updated_profile = await user_service.update_producer_profile(current_user.id, profile_data)
+        return updated_profile
+    except ProducerProfileMissingError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))

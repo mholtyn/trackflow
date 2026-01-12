@@ -58,7 +58,7 @@ class ProducerProfile(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4, primary_key=True)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), unique=True, nullable=False)
     artist_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    music_genre: Mapped[list[str]] = mapped_column(ARRAY(String))
+    music_genre: Mapped[Optional[list[str]]] = mapped_column(ARRAY(String))
     bio: Mapped[str | None] = mapped_column(Text)
     location: Mapped[str | None] = mapped_column(String(100))
     contact_email: Mapped[str] = mapped_column(String(255), nullable=False, unique=True, index=True)

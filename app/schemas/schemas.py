@@ -31,3 +31,39 @@ class UserPublic(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+
+# -------------------- LabelStaffProfiles -----------------------------
+class LabelStaffProfileUpdate(BaseModel):
+    bio: str | None
+    location: str | None
+    contact_email: EmailStr | None
+    social_links: dict | None
+    position: str | None
+
+
+class LabelStaffProfilePublic(BaseModel):
+    bio: str | None
+    location: str | None
+    contact_email: EmailStr | None
+    social_links: dict | None
+    position: str | None
+
+
+# -------------------- ProducerProfiles -----------------------------
+class ProducerProfileUpdate(BaseModel):
+    artist_name: str | None
+    music_genre: list[str] | None
+    bio: str | None
+    location: str | None
+    contact_email: EmailStr | None
+    social_links: dict | None
+
+
+class ProducerProfilePublic(BaseModel):
+    artist_name: str | None
+    music_genre: list[str] | None
+    bio: str | None
+    location: str | None
+    contact_email: EmailStr | None
+    social_links: dict | None
