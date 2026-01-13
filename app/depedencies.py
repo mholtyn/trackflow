@@ -9,8 +9,10 @@ from sqlalchemy import select
 from app.database import get_db
 from app.services.auth import AuthService, InvalidTokenError
 from app.services.users import UserService
-from app.models.models import User, ProducerProfile
+from app.models.models import User, ProducerProfile, LabelStaffProfile, Membership
 from app.services.tracks import TrackService
+from app.services.workspaces import WorkspaceService
+from app.services.memberships import MembershipService
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
@@ -67,3 +69,29 @@ def get_track_service(session: SessionDep, producer_profile_id: CurrentProducerP
        return TrackService(session, producer_profile_id)
 
 TrackServiceDep = Annotated[TrackService, Depends(get_track_service)]
+
+
+async def get_labelstaff_profile_id(current_user: CurrentUserDep, session: SessionDep) -> UUID:
+       result = await session.execute(select(LabelStaffProfile.id).where(LabelStaffProfile.user_id == current_user.id))
+       labelstaff_profile_id = result.scalar_one_or_none()
+
+       if not labelstaff_profile_id:
+              raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Labelstaff profile not found.")
+       
+       return labelstaff_profile_id
+
+CurrentLabelstaffProfileIdDep = Annotated[UUID, Depends(get_labelstaff_profile_id)]
+
+
+def get_workspace_service(session: SessionDep, labelstaff_profile_id: CurrentLabelstaffProfileIdDep) -> WorkspaceService:
+       return TrackService(session, labelstaff_profile_id)
+
+
+WorkspaceServiceDep = Annotated[WorkspaceService, Depends(get_workspace_service)]
+
+
+def get_membership_service(session: SessionDep, labelstaff_profile_id: CurrentLabelstaffProfileIdDep) -> MembershipService:
+       return MembershipService(session, labelstaff_profile_id)
+
+
+MembershipServiceDep = Annotated[MembershipService, Depends(get_membership_service)]

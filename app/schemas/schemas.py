@@ -103,3 +103,31 @@ class TrackUpdate(BaseModel):
     genre: list[str] | None
     key: str | None
     extra_metadata: dict | None
+
+
+# -------------------- Workspaces -----------------------------
+class WorkspaceCreate(BaseModel):
+    name: str
+
+
+class WorkspaceUpdate(BaseModel):
+    name: str
+
+
+class WorkspacePublic(BaseModel):
+    id: UUID
+    name: str
+
+    model_config = {"from_attributes": True}
+
+
+# -------------------- Memberships -----------------------------
+class MembershipCreate(BaseModel):
+    name: str
+
+
+class MembershipPublic(BaseModel):
+    id: UUID
+    name: str
+
+    model_config = {"from_attributes": True}
