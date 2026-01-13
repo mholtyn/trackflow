@@ -49,6 +49,8 @@ class LabelStaffProfilePublic(BaseModel):
     social_links: dict | None
     position: str | None
 
+    model_config = {"from_attributes": True}
+
 
 # -------------------- ProducerProfiles -----------------------------
 class ProducerProfileUpdate(BaseModel):
@@ -67,3 +69,37 @@ class ProducerProfilePublic(BaseModel):
     location: str | None
     contact_email: EmailStr | None
     social_links: dict | None
+
+    model_config = {"from_attributes": True}
+
+
+# -------------------- Tracks -----------------------------
+class TrackCreate(BaseModel):
+    title: str
+    streaming_url: str
+    tempo: float
+    genre: list[str]
+    key: str | None = None
+    extra_metadata: dict | None = None
+
+
+class TrackPublic(BaseModel):
+    id: UUID
+    producer_profile_id: UUID
+    title: str
+    streaming_url: str
+    tempo: float
+    genre: list[str]
+    key: str | None = None
+    extra_metadata: dict | None = None
+
+    model_config = {"from_attributes": True}
+
+
+class TrackUpdate(BaseModel):
+    title: str | None
+    streaming_url: str | None
+    tempo: float | None
+    genre: list[str] | None
+    key: str | None
+    extra_metadata: dict | None

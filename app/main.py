@@ -1,6 +1,7 @@
 from fastapi import FastAPI, status, APIRouter
 
 from app.routers import users
+from app.routers import tracks
 from app.database import init_db
 
 
@@ -10,6 +11,7 @@ app = FastAPI(title="Trackflow",
 
 api_router = APIRouter()
 api_router.include_router(router=users.router)
+api_router.include_router(router=tracks.router)
 
 
 @api_router.get("/", status_code=status.HTTP_200_OK)

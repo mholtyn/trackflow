@@ -1,13 +1,16 @@
 from typing import Annotated
+from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.database import get_db
 from app.services.auth import AuthService, InvalidTokenError
 from app.services.users import UserService
-from app.models.models import User
+from app.models.models import User, ProducerProfile
+from app.services.tracks import TrackService
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
@@ -46,3 +49,21 @@ async def get_current_user(auth_service: AuthServiceDep,
 
 
 CurrentUserDep = Annotated[User, Depends(get_current_user)]
+
+
+async def get_producer_profile_id(current_user: CurrentUserDep, session: SessionDep) -> UUID:
+       result = await session.execute(select(ProducerProfile.id).where(ProducerProfile.user_id == current_user.id))
+       producer_profile_id = result.scalar_one_or_none()
+
+       if not producer_profile_id:
+              raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Producer profile not found.")
+
+       return producer_profile_id
+
+CurrentProducerProfileIdDep = Annotated[UUID, Depends(get_producer_profile_id)]
+
+
+def get_track_service(session: SessionDep, producer_profile_id: CurrentProducerProfileIdDep) -> TrackService:
+       return TrackService(session, producer_profile_id)
+
+TrackServiceDep = Annotated[TrackService, Depends(get_track_service)]
