@@ -1,11 +1,11 @@
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, status, HTTPException, Depends
+from fastapi import APIRouter, status, HTTPException, Depends, Response
 
 from app.schemas.schemas import TrackCreate, TrackPublic, TrackUpdate
 from app.depedencies import TrackServiceDep
-from app.services.users import AuthenticationError, PasswordTooWeakError, UsernameAlreadyTakenError, LabelStaffProfileMissingError, ProducerProfileMissingError
+from app.services.tracks import TrackNotFoundError, TrackForbiddenError
 
 
 router = APIRouter(tags=["Tracks"])
@@ -19,14 +19,27 @@ async def add_track(track_data: TrackCreate, track_service: TrackServiceDep) -> 
 
 @router.patch("/tracks/{track_id}", status_code=status.HTTP_200_OK, response_model=TrackPublic)
 async def edit_track(track_data: TrackUpdate, track_id: UUID, track_service: TrackServiceDep) -> TrackPublic:
-    pass
+    try:
+        updated_track = await track_service.update_track(track_data, track_id)
+        return updated_track
+    except TrackNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TrackForbiddenError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
 @router.delete("/tracks/{track_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_track(track_id: UUID, track_service: TrackServiceDep) -> None:
-    pass
+async def delete_track(track_id: UUID, track_service: TrackServiceDep) -> Response:
+    try:
+        await track_service.delete_track(track_id)
+        return Response(content=None, status_code=status.HTTP_204_NO_CONTENT)
+    except TrackNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TrackForbiddenError as e:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
 
 
 @router.get("/tracks", status_code=status.HTTP_200_OK, response_model=list[TrackPublic])
 async def list_tracks(track_service: TrackServiceDep) -> list[TrackPublic]:
-    pass
+    tracks = await track_service.list_tracks()
+    return tracks

@@ -1,9 +1,20 @@
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 from app.models.models import Track
 from app.schemas.schemas import TrackCreate, TrackUpdate
+
+
+class TrackNotFoundError(Exception):
+    """Raise when track couldn't be found."""
+    pass
+
+
+class TrackForbiddenError(Exception):
+    """Raise when permission is denied to track."""
+    pass
 
 
 class TrackService:
@@ -30,12 +41,41 @@ class TrackService:
 
 
     async def update_track(self, track_data: TrackUpdate, track_id: UUID) -> Track:
-        pass
+        result = await self.session.execute(select(Track).where(Track.id == track_id))
+        track = result.scalar_one_or_none()
+
+        if not track:
+            raise TrackNotFoundError("Track not found.")
+
+        if track.producer_profile_id != self.producer_profile_id:
+            raise TrackForbiddenError("Access denied.")  
+
+        update_data = track_data.model_dump(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(track, key, value)
+        
+        await self.session.commit()
+        await self.session.refresh(track)
+        return track
 
 
     async def delete_track(self, track_id: UUID) -> None:
-        pass
+        result = await self.session.execute(select(Track).where(Track.id == track_id))
+        track = result.scalar_one_or_none()
+
+        if not track:
+            raise TrackNotFoundError("Track not found.")
+
+        if track.producer_profile_id != self.producer_profile_id:
+            raise TrackForbiddenError("Access denied.")    
+
+        self.session.delete(track)
+        await self.session.commit()
+        return
 
 
     async def list_tracks(self) -> list[Track]:
-        pass
+        result = await self.session.execute(select(Track).where(Track.producer_profile_id == self.producer_profile_id))
+        tracks = result.scalars().all()
+
+        return tracks
