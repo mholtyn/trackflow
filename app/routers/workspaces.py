@@ -1,7 +1,6 @@
-from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, status, HTTPException, Depends, Response
+from fastapi import APIRouter, status, HTTPException, Response
 
 from app.schemas.schemas import WorkspaceCreate, WorkspacePublic, WorkspaceUpdate, MembershipCreate, MembershipPublic
 from app.depedencies import WorkspaceServiceDep, MembershipServiceDep

@@ -9,7 +9,7 @@ from sqlalchemy import select
 from app.database import get_db
 from app.services.auth import AuthService, InvalidTokenError
 from app.services.users import UserService
-from app.models.models import User, ProducerProfile, LabelStaffProfile, Membership
+from app.models.models import User, ProducerProfile, LabelStaffProfile
 from app.services.tracks import TrackService
 from app.services.workspaces import WorkspaceService
 from app.services.memberships import MembershipService

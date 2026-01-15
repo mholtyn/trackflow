@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
+from sqlalchemy import select
 
 from app.models.models import Membership
 from app.schemas.schemas import MembershipCreate
