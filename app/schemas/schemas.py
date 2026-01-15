@@ -123,11 +123,11 @@ class WorkspacePublic(BaseModel):
 
 # -------------------- Memberships -----------------------------
 class MembershipCreate(BaseModel):
-    name: str
+    role: LabelRole
 
 
 class MembershipPublic(BaseModel):
     id: UUID
-    name: str
+    role: LabelRole
 
     model_config = {"from_attributes": True}

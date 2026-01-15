@@ -52,12 +52,23 @@ async def list_workspaces(workspace_service: WorkspaceServiceDep) -> list[Worksp
 
 
 # -------------------- Memberships -----------------------------
-@router.post("/memberships", status_code=status.HTTP_201_CREATED)
+@router.post("/workspaces/{workspace_id}/memberships", status_code=status.HTTP_201_CREATED, response_model=MembershipPublic)
 async def add_member(member_role: MembershipCreate,
+                     workspace_id: UUID,
                      membership_service: MembershipServiceDep) -> MembershipPublic:
-    pass
+    admin_or_member = await membership_service.get_membership(workspace_id)
+    if admin_or_member.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only label admins can edit members.")
+
+    new_member = await membership_service.add_member(member_role, workspace_id)
+    return new_member
 
 
-@router.delete("/memberships/{labelstaff_profile_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_member(membership_service: MembershipServiceDep) -> Response:
-    pass
+@router.delete("/workspaces/{workspace_id}/memberships/{labelstaff_profile_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_member(workspace_id: UUID, labelstaff_profile_id: UUID, membership_service: MembershipServiceDep) -> Response:
+        admin_or_member = await membership_service.get_membership(workspace_id)
+        if admin_or_member.role != "admin":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only label admins can edit members.")
+        
+        await membership_service.delete_member(workspace_id, labelstaff_profile_id)
+        return Response(content=None, status_code=status.HTTP_204_NO_CONTENT)
