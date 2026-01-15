@@ -84,7 +84,7 @@ CurrentLabelstaffProfileIdDep = Annotated[UUID, Depends(get_labelstaff_profile_i
 
 
 def get_workspace_service(session: SessionDep, labelstaff_profile_id: CurrentLabelstaffProfileIdDep) -> WorkspaceService:
-       return TrackService(session, labelstaff_profile_id)
+       return WorkspaceService(session, labelstaff_profile_id)
 
 
 WorkspaceServiceDep = Annotated[WorkspaceService, Depends(get_workspace_service)]
