@@ -24,7 +24,7 @@ class LabelRole(str, Enum):
 
 class UserType(str, Enum):
     producer = "producer"
-    label_staff = "label_staff"
+    label_staff = "labelstaff"
 
 
 class Status(str, Enum):
