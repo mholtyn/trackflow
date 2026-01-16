@@ -28,11 +28,12 @@ class UserType(str, Enum):
 
 
 class Status(str, Enum):
-    sent = "sent"
-    pending = "pending"
-    read = "read"
-    accepted = "accepted"
-    rejected = "rejected"
+    PENDING = "PENDING"
+    WITHDRAWN = "WITHDRAWN"
+    IN_REVIEW = "IN_REVIEW"
+    SHORTLISTED = "SHORTLISTED"
+    ACCEPTED = "ACCEPTED"
+    REJECTED = "REJECTED"
 
 
 class User(Base):

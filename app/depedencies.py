@@ -13,6 +13,7 @@ from app.models.models import User, ProducerProfile, LabelStaffProfile
 from app.services.tracks import TrackService
 from app.services.workspaces import WorkspaceService
 from app.services.memberships import MembershipService
+from app.services.submissions import SubmissionQueryService, SubmissionWorkflowService
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
@@ -95,3 +96,15 @@ def get_membership_service(session: SessionDep, labelstaff_profile_id: CurrentLa
 
 
 MembershipServiceDep = Annotated[MembershipService, Depends(get_membership_service)]
+
+
+def get_submission_query_service(session: SessionDep) -> SubmissionQueryService:
+       return SubmissionQueryService(session)
+
+SubmissionQueryServiceDep = Annotated[SubmissionQueryService, Depends(get_submission_query_service)]
+
+
+def get_submission_workflow_service(session: SessionDep) -> SubmissionWorkflowService:
+       return SubmissionWorkflowService(session)
+
+SubmissionWorkflowServiceDep = Annotated[SubmissionWorkflowService, Depends(get_submission_workflow_service)]

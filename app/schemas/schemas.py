@@ -131,3 +131,32 @@ class MembershipPublic(BaseModel):
     role: LabelRole
 
     model_config = {"from_attributes": True}
+
+
+# -------------------- Submissions -----------------------------
+class SubmissionCreate(BaseModel):
+    workspace_id: UUID
+    title: str
+    streaming_url: str
+    tempo: float
+    genre: list[str] | None = None
+    key: str | None = None
+    extra_metadata: dict | None = None
+
+    status: Status
+
+
+class SubmissionPublic(BaseModel):
+    id: UUID
+    producer_profile_id: UUID
+    workspace_id: UUID
+    title: str
+    streaming_url: str
+    tempo: float
+    genre: list[str] | None = None
+    key: str | None = None
+    extra_metadata: dict | None = None
+    
+    status: Status
+
+    model_config = {"from_attributes": True}

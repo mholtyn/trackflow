@@ -10,6 +10,8 @@ from app.services.memberships import MembershipNotFoundError, MembershipForbidde
 
 router = APIRouter(tags=["Workspaces and Memberships"])
 
+#TODO: Refactor error handling according to actual code 404 vs 403
+
 
 # -------------------- Workspaces -----------------------------
 @router.post("/workspaces", status_code=status.HTTP_201_CREATED, response_model=WorkspacePublic)
