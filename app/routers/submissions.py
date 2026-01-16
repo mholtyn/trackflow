@@ -4,10 +4,7 @@ from fastapi import APIRouter, status, HTTPException, Response
 
 from app.schemas.schemas import SubmissionCreate, SubmissionPublic
 from app.depedencies import SubmissionQueryServiceDep, WorkspaceServiceDep, MembershipServiceDep, CurrentProducerProfileIdDep, SubmissionWorkflowServiceDep
-from app.services.submissions import (
-    SubmissionWithdrawnError, SubmissionInReviewError, SubmissionAcceptedError,
-    SubmissionRejectedError, SubmissionShortlistedError, SubmissionTransitionNotAllowedError
-    )
+from app.services.submissions import SubmissionNotFoundError, TransitionNotAllowedError
 
 
 router = APIRouter(tags=["Submissions"])
@@ -50,10 +47,12 @@ async def transition_to_withdrawn(submission_id: UUID,
                                   producer_profile_id: CurrentProducerProfileIdDep) -> Response:
     """Transition: PENDING -> WITHDRAWN"""
     try:
-        await submission_workflow_service.transition_to_withdrawn(submission_id, producer_profile_id)
+        await submission_workflow_service.withdraw(submission_id, producer_profile_id)
         return Response(content=None, status_code=status.HTTP_204_NO_CONTENT)
-    except SubmissionWithdrawnError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except SubmissionNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TransitionNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
 @router.post("/workspaces/{workspace_id}/submissions/{submission_id}/start-review",
@@ -64,10 +63,12 @@ async def transition_to_in_review(workspace_id: UUID,
                                   ) -> SubmissionPublic:
     """Transition: PENDING -> IN-REVIEW"""
     try:
-        submission_in_review = await submission_workflow_service.transition_to_in_review(submission_id, workspace_id)
+        submission_in_review = await submission_workflow_service.start_review(submission_id, workspace_id)
         return submission_in_review
-    except SubmissionInReviewError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except SubmissionNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TransitionNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
 @router.post("/workspaces/{workspace_id}/submissions/{submission_id}/shortlist",
@@ -78,10 +79,12 @@ async def transition_to_shortlisted(workspace_id: UUID,
                                     ) -> SubmissionPublic:
     """Transition: IN-REVIEW -> SHORTLISTED"""
     try:
-        submission_shortlisted = await submission_workflow_service.transition_to_shortlisted(submission_id, workspace_id)
+        submission_shortlisted = await submission_workflow_service.shortlist(submission_id, workspace_id)
         return submission_shortlisted
-    except SubmissionShortlistedError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except SubmissionNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TransitionNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
 @router.post("/workspaces/{workspace_id}/submissions/{submission_id}/accept",
@@ -92,10 +95,12 @@ async def transition_to_accepted(workspace_id: UUID,
                                 ) -> SubmissionPublic:
     """Transition: IN-REVIEW -> ACCEPTED | SHORTLISTED -> ACCEPTED"""
     try:
-        submission_accepted = await submission_workflow_service.transition_to_accepted(submission_id, workspace_id)
+        submission_accepted = await submission_workflow_service.accept(submission_id, workspace_id)
         return submission_accepted
-    except SubmissionAcceptedError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except SubmissionNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TransitionNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
 @router.post("/workspaces/{workspace_id}/submissions/{submission_id}/reject",
@@ -106,7 +111,9 @@ async def transition_to_rejected(workspace_id: UUID,
                                 ) -> SubmissionPublic:
     """Transition: IN-REVIEW -> REJECTED | SHORTLISTED -> REJECTED"""
     try:
-        submission_rejected = await submission_workflow_service.transition_to_rejected(submission_id, workspace_id)
+        submission_rejected = await submission_workflow_service.reject(submission_id, workspace_id)
         return submission_rejected
-    except SubmissionRejectedError as e:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except SubmissionNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except TransitionNotAllowedError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))

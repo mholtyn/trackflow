@@ -143,8 +143,6 @@ class SubmissionCreate(BaseModel):
     key: str | None = None
     extra_metadata: dict | None = None
 
-    status: Status
-
 
 class SubmissionPublic(BaseModel):
     id: UUID
@@ -156,7 +154,7 @@ class SubmissionPublic(BaseModel):
     genre: list[str] | None = None
     key: str | None = None
     extra_metadata: dict | None = None
-    
+
     status: Status
 
     model_config = {"from_attributes": True}
