@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, HTTPException, Response
 
 from app.schemas.schemas import SubmissionCreate, SubmissionPublic
-from app.depedencies import SubmissionQueryServiceDep, WorkspaceServiceDep, MembershipServiceDep, CurrentProducerProfileIdDep, SubmissionWorkflowServiceDep, CurrentLabelstaffProfileIdDep
+from app.depedencies import SubmissionQueryServiceDep, MembershipServiceDep, CurrentProducerProfileIdDep, SubmissionWorkflowServiceDep
 from app.services.submissions import SubmissionNotFoundError, TransitionNotAllowedError
 from app.services.memberships import MembershipNotFoundError
 
