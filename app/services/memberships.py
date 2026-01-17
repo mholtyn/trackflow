@@ -66,3 +66,14 @@ class MembershipService:
         
         self.session.delete(member)
         await self.session.commit()
+
+    
+    async def is_member_of_label(self, workspace_id: UUID) -> None:
+        result = await self.session.execute(select(Membership).where(
+            Membership.labelstaff_profile_id == self.labelstaff_profile_id,
+            Membership.workspace_id == workspace_id
+        ))
+        member = result.scalar_one_or_none()
+
+        if not member:
+            raise MembershipNotFoundError("Membership not found.")
