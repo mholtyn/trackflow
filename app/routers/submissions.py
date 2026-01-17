@@ -15,6 +15,7 @@ router = APIRouter(tags=["Submissions"])
 async def list_producer_submissions(submission_query_service: SubmissionQueryServiceDep,
                                     producer_profile_id: CurrentProducerProfileIdDep
                                     ) -> list[SubmissionPublic]:
+    """Read submissions | Producer side"""
     submissions = await submission_query_service.list_producer_submissions(producer_profile_id)
     return submissions
 
@@ -22,6 +23,7 @@ async def list_producer_submissions(submission_query_service: SubmissionQuerySer
 @router.get("/workspaces/{workspace_id}/submissions", status_code=status.HTTP_200_OK, response_model=list[SubmissionPublic])
 async def list_label_submissions(submission_query_service: SubmissionQueryServiceDep,
                                  workspace_id: UUID) -> list[SubmissionPublic]:
+    """Read submissions | Label side"""
     submissions = await submission_query_service.list_label_submissions(workspace_id)
     return submissions
 

@@ -2,11 +2,9 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 
-from app.models.models import Workspace, Membership, Submission, Status
-from app.schemas.schemas import SubmissionCreate, SubmissionPublic
-from app.services.workspaces import WorkspaceNotFoundError
+from app.models.models import Submission, Status
+from app.schemas.schemas import SubmissionCreate
 
 
 class SubmissionNotFoundError(Exception):

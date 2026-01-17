@@ -13,6 +13,7 @@ router = APIRouter(tags=["Users"])
 
 @router.post("/register", status_code=status.HTTP_201_CREATED, response_model=UserPublic)
 async def register(user_data: UserCreate, service: UserServiceDep) -> UserPublic:
+    """Register new user"""
     try:
         return await service.create_user(user_data)
     except PasswordTooWeakError as e:
@@ -24,6 +25,7 @@ async def register(user_data: UserCreate, service: UserServiceDep) -> UserPublic
 @router.post("/token", status_code=status.HTTP_200_OK, response_model=Token)
 async def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                      user_service: UserServiceDep) -> Token:
+    """Login"""
     try:
         user = await user_service.authenticate_user(form_data.username, form_data.password)
         token = user_service.auth_service.generate_access_token(user.id)
@@ -34,6 +36,7 @@ async def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 
 @router.get("/me", status_code=status.HTTP_200_OK, response_model=UserPublic)
 async def read_user(current_user: CurrentUserDep) -> UserPublic:
+    """Read user data"""
     return current_user
 
 
@@ -41,6 +44,7 @@ async def read_user(current_user: CurrentUserDep) -> UserPublic:
 async def update_labelstaff_profile(profile_data: LabelStaffProfileUpdate,
                                     current_user: CurrentUserDep,
                                     user_service: UserServiceDep) -> LabelStaffProfilePublic:
+    """Update labelstaff profile data"""
     try:
         updated_profile = await user_service.update_labelstaff_profile(current_user.id, profile_data)
         return updated_profile
@@ -52,6 +56,7 @@ async def update_labelstaff_profile(profile_data: LabelStaffProfileUpdate,
 async def update_producer_profile(profile_data: ProducerProfileUpdate,
                                   current_user: CurrentUserDep,
                                   user_service: UserServiceDep) -> ProducerProfilePublic:
+    """Update producer profile data"""
     try:
         updated_profile = await user_service.update_producer_profile(current_user.id, profile_data)
         return updated_profile
