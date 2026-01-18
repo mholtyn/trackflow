@@ -158,3 +158,16 @@ class SubmissionPublic(BaseModel):
     status: Status
 
     model_config = {"from_attributes": True}
+
+
+# -------------------- SubmissionEvents -----------------------------
+class SubmissionEventPublic(BaseModel):
+    id: UUID
+    status: Status
+    event_date: datetime
+    submission_id: UUID
+    workspace_id: UUID
+    producer_profile_id: UUID | None
+    labelstaff_profile_id: UUID | None
+
+    model_config = {"from_attributes": True}

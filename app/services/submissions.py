@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.models.models import Submission, Status
+from app.models.models import Submission, Status, SubmissionEvent
 from app.schemas.schemas import SubmissionCreate
 
 
@@ -14,6 +14,11 @@ class SubmissionNotFoundError(Exception):
 
 class TransitionNotAllowedError(Exception):
     """Raise when status change is illegal i.e. ACCEPTED -> PENDING"""
+    pass
+
+
+class ActorNotUniqueError(Exception):
+    """Raise when submission event object doesn't have exactly one actor"""
     pass
 
 
@@ -34,13 +39,28 @@ class SubmissionQueryService:
         submissions = result.scalars().all()
 
         return submissions
+    
+    
+    async def list_producer_submission_events(self, producer_profile_id: UUID) -> list[SubmissionEvent]:
+        result = await self.session.execute(select(SubmissionEvent).where(SubmissionEvent.producer_profile_id == producer_profile_id))
+        submission_events = result.scalars().all()
 
+        return submission_events
+
+
+    async def list_label_submission_events(self, workspace_id: UUID) -> list[SubmissionEvent]:
+        result = await self.session.execute(select(SubmissionEvent).where(SubmissionEvent.workspace_id == workspace_id))
+        submission_events = result.scalars().all()
+
+        return submission_events
+    
 
 class SubmissionWorkflowService:
     allowed_transitions = {
         Status.PENDING: {Status.IN_REVIEW, Status.WITHDRAWN},
         Status.IN_REVIEW: {Status.ACCEPTED, Status.REJECTED, Status.SHORTLISTED},
         Status.SHORTLISTED: {Status.ACCEPTED, Status.REJECTED},
+        Status.WITHDRAWN: {},
         Status.ACCEPTED: {},
         Status.REJECTED: {},
     }
@@ -61,6 +81,7 @@ class SubmissionWorkflowService:
                                   target_status: Status,
                                   producer_profile_id: UUID | None = None,
                                   workspace_id: UUID | None = None,
+                                  labelstaff_profile_id: UUID | None = None
                                   ) -> Submission:
         stmt = select(Submission).where(Submission.id == submission_id)
 
@@ -77,11 +98,24 @@ class SubmissionWorkflowService:
         if not submission:
             raise SubmissionNotFoundError("Could not find submission.")
         
-        allowed = self.allowed_transitions.get(submission.status, None)
+        allowed = self.allowed_transitions.get(submission.status, set())
         if target_status not in allowed:
             raise TransitionNotAllowedError(f"Cannot transition from {submission.status} to {target_status}")
 
+        if bool(producer_profile_id) == bool(labelstaff_profile_id):
+            raise ActorNotUniqueError("Exactly one actor must be provided")
+
         submission.status = target_status
+        await self.session.flush()
+
+        event = SubmissionEvent(
+                status=target_status,
+                submission_id=submission.id,
+                workspace_id=submission.workspace_id,
+                producer_profile_id=producer_profile_id,
+                labelstaff_profile_id=labelstaff_profile_id
+        )
+        self.session.add(event)
 
         await self.session.commit()
         await self.session.refresh(submission)
@@ -108,29 +142,29 @@ class SubmissionWorkflowService:
 
     async def withdraw(self, submission_id: UUID, producer_profile_id: UUID) -> Submission:
         return await self._execute_transition(
-            submission_id, Status.WITHDRAWN, producer_profile_id
+            submission_id=submission_id, target_status=Status.WITHDRAWN, producer_profile_id=producer_profile_id
         )
 
 
-    async def start_review(self, submission_id: UUID, workspace_id: UUID) -> Submission:
+    async def start_review(self, submission_id: UUID, workspace_id: UUID, labelstaff_profile_id: UUID) -> Submission:
         return await self._execute_transition(
-            submission_id, Status.IN_REVIEW, workspace_id
+            submission_id=submission_id, target_status=Status.IN_REVIEW, workspace_id=workspace_id, labelstaff_profile_id=labelstaff_profile_id
         )
 
 
-    async def shortlist(self, submission_id: UUID, workspace_id: UUID) -> Submission:
+    async def shortlist(self, submission_id: UUID, workspace_id: UUID, labelstaff_profile_id: UUID) -> Submission:
         return await self._execute_transition(
-            submission_id, Status.SHORTLISTED, workspace_id
+            submission_id=submission_id, target_status=Status.SHORTLISTED, workspace_id=workspace_id, labelstaff_profile_id=labelstaff_profile_id
         )
 
 
-    async def accept(self, submission_id: UUID, workspace_id: UUID) -> Submission:
+    async def accept(self, submission_id: UUID, workspace_id: UUID, labelstaff_profile_id: UUID) -> Submission:
         return await self._execute_transition(
-            submission_id, Status.ACCEPTED, workspace_id
+            submission_id=submission_id, target_status=Status.ACCEPTED, workspace_id=workspace_id, labelstaff_profile_id=labelstaff_profile_id
         )
 
 
-    async def reject(self, submission_id: UUID, workspace_id: UUID) -> Submission:
+    async def reject(self, submission_id: UUID, workspace_id: UUID, labelstaff_profile_id: UUID) -> Submission:
         return await self._execute_transition(
-            submission_id, Status.REJECTED, workspace_id
+            submission_id=submission_id, target_status=Status.REJECTED, workspace_id=workspace_id, labelstaff_profile_id=labelstaff_profile_id
         )

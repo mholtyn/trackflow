@@ -4,7 +4,7 @@ import uuid
 from typing import Optional
 
 from sqlalchemy import String, DateTime, func, Float, ForeignKey, UUID, Text, ARRAY
-from sqlalchemy import Enum as SAEnum
+from sqlalchemy import Enum as SAEnum, CheckConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -161,3 +161,11 @@ class SubmissionEvent(Base):
     workspace: Mapped["Workspace"] = relationship(back_populates="submission_events")
     producer: Mapped["ProducerProfile"] = relationship(back_populates="submission_events")
     labelstaff: Mapped["LabelStaffProfile"] = relationship(back_populates="submission_events")
+
+    __table_args__ = (
+        CheckConstraint(
+            "(producer_profile_id IS NOT NULL AND labelstaff_profile_id IS NULL) OR "
+            "(producer_profile_id IS NULL AND labelstaff_profile_id IS NOT NULL)",
+            name="exactly_one_actor_provided"
+        )
+    )
