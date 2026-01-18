@@ -167,5 +167,5 @@ class SubmissionEvent(Base):
             "(producer_profile_id IS NOT NULL AND labelstaff_profile_id IS NULL) OR "
             "(producer_profile_id IS NULL AND labelstaff_profile_id IS NOT NULL)",
             name="exactly_one_actor_provided"
-        )
+        ),
     )
