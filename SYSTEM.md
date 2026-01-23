@@ -1,10 +1,6 @@
 # System Overview
-The system is designed to allow managing music demos as a structured, state-driven workflow. Each state change creates an immutable event stored for history. The core design philosophy follow the principles of layered architecture.
+The system is designed to allow managing music demos as a structured, state-driven workflow. Each state change creates an immutable event stored for history. The core design philosophy follows the principles of layered architecture.
 
-The system has three layers:
-- HTTP communication layer: handles requests, responses and errors.
-- Service layer: manages all of the core business logic.
-- Data access and persistance layer: interacts with database to save and fetch data.
 
 ## Core System Invariants
 - A user has exactly one user type: producer or labelstaff.
@@ -25,7 +21,7 @@ In the current version there are 8 models in total, out of which 4 are aggregate
 
 - **LabelstaffProfile** is analogous to ProducerProfile, but for the label side of the platform. Defines the user as labelstaff. 1-1 relation with User.
 
-- **Track** represents a music demo uploaded by a producer. A track is the original piece of music and exists independently of any submission They are not reviewed or processed by labels directly. Each track belongs to exactly one ProducerProfile. **Aggregate Root**
+- **Track** represents a music demo uploaded by a producer. A track is the original piece of music and exists independently of any submission.They are not reviewed or processed by labels directly. Each track belongs to exactly one ProducerProfile. **Aggregate Root**
 
 - **Workspace** represents a label and acts as an ownership and permission boundary. All submissions and labelstaff memberships are scoped to a workspace. **Aggregate Root**
 
@@ -40,7 +36,7 @@ In the current version there are 8 models in total, out of which 4 are aggregate
 ## Submission Lifecycle (State Machine)
 ![Alt text](state-machine.png)
 
-Each Submission must follow a predefined lifecycle. Each state colored in blue is triggered by Producers, each state colored in green is triggered by Labelstaffs.
+Each Submission must follow a predefined lifecycle. Each state colored in blue is triggered by Producers, each state colored in green is triggered by Labelstaffs. Each submission captures a snapshot of the track's metadata at that moment, ensuring history remains accurate even if the producer modifies the original track record later. 
 
 Statuses are represented by a custom Enum in app/models/models.py.
 ```python
@@ -61,11 +57,10 @@ class Status(str, Enum):
 
 
 ## Submission Events History
-On top of the State Machine this system also maintans a immutable audit log of all submission related state changes through **SubmissionEvents**. It does not serve as the source of truth that guides the progression of a Submission. Submissions have their own attribute called "status" which dictates the workflow. [Reference](#submission-lifecycle-state-machine)
+On top of the State Machine this system also maintains an immutable audit log of all submission related state changes through **SubmissionEvents**. It does not serve as the source of truth that guides the progression of a Submission. Submissions have their own attribute called "status" which dictates the workflow. [Reference](#submission-lifecycle-state-machine)
 
 - Submission events are created whenever a state change action occurs related to a Submission.
 - Each event logs who performed the action and when.
-- Each event captures a snapshot of the track's metadata at that moment, ensuring history remains accurate even if the producer modifies the original track record later. 
 - Events are append-only and cannot be modified or deleted once created.
 - Stored in a dedicated database table indexed by submission ID and timestamp to support efficient retrieval of history.
 - Events serve as a historical record for tracking all actions performed on a submission.
@@ -82,7 +77,7 @@ The system enforces strict role-based access rules to ensure that submissions, w
     - Can withdraw a submission only while it is in PENDING.
     - Cannot modify submissions after creation.
     - Cannot change submission states other than withdrawal.
-    - Have no access to workspaces or other producers’ data.
+    - Has no access to workspaces or other producers’ data.
 
 - **Labelstaff Member**: Represents a member of a label who reviews and manages submissions within a workspace.
     - Can view submissions belonging to their workspace.
@@ -95,11 +90,10 @@ State transitions are only allowed if the acting user has the required role, the
 
 
 ## Code Architecture
-The system follows a strict layered architecture. Each layer has a single responsibility and clear boundaries.
-
-- HTTP layer handles routing, request parsing, authentication, and response formatting without business logic.
-- Serivce layer contains all domain logic, enforces permissions, and manages state transitions.
-- Database layer manages data persistence and retrieval, exposing no business rules.
+The system has three layers:
+- HTTP communication layer: handles requests, responses and errors.
+- Service layer: manages all of the core business logic.
+- Data access and persistence layer: interacts with database to save and fetch data.
 
 ### App file structure
 - `app/models/models.py` - Database ORM models
@@ -107,10 +101,10 @@ The system follows a strict layered architecture. Each layer has a single respon
 - `app/schemas/schema.py` - Pydantic models
 - `app/services/` - Core business logic divided into separate components
 - `app/database.py` - Database connection set up
-- `app/dependecies.py` - FastAPI depedency factory
+- `app/dependencies.py` - FastAPI depedency factory
 - `app/main.py` - Main app file
 - `app/settings.py` - Config
 
 
 #### Last update: 23/01/2026
-#### Document version: v1.0
+#### Document version: v1.1

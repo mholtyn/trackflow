@@ -4,7 +4,7 @@ from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.schemas import UserCreate, UserPublic, Token, LabelStaffProfileUpdate, LabelStaffProfilePublic, ProducerProfilePublic, ProducerProfileUpdate
-from app.depedencies import CurrentUserDep, UserServiceDep
+from trackflow.app.dependencies import CurrentUserDep, UserServiceDep
 from app.services.users import AuthenticationError, PasswordTooWeakError, UsernameAlreadyTakenError, LabelStaffProfileMissingError, ProducerProfileMissingError
 
 
