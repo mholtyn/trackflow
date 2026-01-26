@@ -3,6 +3,9 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+// import RetroUI Button (dostosuj ścieżkę do swojego projektu)
+import { Button } from '@/components/retroui/Button'
+
 function App() {
   const [count, setCount] = useState(0)
 
@@ -21,6 +24,8 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
+        {/* Tutaj dodaj RetroUI Button */}
+        <Button>Click Me!</Button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
