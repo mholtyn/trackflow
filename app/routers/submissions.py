@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, HTTPException, Response
 
 from app.schemas.schemas import SubmissionCreate, SubmissionPublic, SubmissionEventPublic
-from trackflow.app.dependencies import SubmissionQueryServiceDep, MembershipServiceDep, CurrentProducerProfileIdDep, SubmissionWorkflowServiceDep
+from app.dependencies import SubmissionQueryServiceDep, MembershipServiceDep, CurrentProducerProfileIdDep, SubmissionWorkflowServiceDep
 from app.services.submissions import SubmissionNotFoundError, TransitionNotAllowedError, ActorNotUniqueError
 from app.services.memberships import MembershipNotFoundError
 

@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, HTTPException, Response
 
 from app.schemas.schemas import TrackCreate, TrackPublic, TrackUpdate
-from trackflow.app.dependencies import TrackServiceDep
+from app.dependencies import TrackServiceDep
 from app.services.tracks import TrackNotFoundError, TrackForbiddenError
 
 

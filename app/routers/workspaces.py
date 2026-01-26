@@ -3,7 +3,7 @@ from uuid import UUID
 from fastapi import APIRouter, status, HTTPException, Response
 
 from app.schemas.schemas import WorkspaceCreate, WorkspacePublic, WorkspaceUpdate, MembershipCreate, MembershipPublic
-from trackflow.app.dependencies import WorkspaceServiceDep, MembershipServiceDep
+from app.dependencies import WorkspaceServiceDep, MembershipServiceDep
 from app.services.workspaces import WorkspaceForbiddenError, WorkspaceNotFoundError
 from app.services.memberships import MembershipNotFoundError, MembershipForbiddenError
 
