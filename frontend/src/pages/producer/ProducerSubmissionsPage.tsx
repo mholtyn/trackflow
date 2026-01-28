@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { SubmissionActions } from "@/components/submissions/SubmissionActions";
-import { SubmissionList } from "@/components/submissions/SubmissionList";
-import { SubmissionHistory } from "@/components/submissions/SubmissionHistory";
+import { SubmissionActions } from "@/components/submissions/ProducerSubmissionActions";
+import { SubmissionList } from "@/components/submissions/ProducerSubmissionList";
+import { SubmissionHistory } from "@/components/submissions/ProducerSubmissionHistory";
 
 interface Submission {
   id: string;
