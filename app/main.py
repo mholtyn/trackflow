@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status, APIRouter
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import users
 from app.routers import tracks
@@ -10,6 +11,14 @@ from app.database import init_db
 app = FastAPI(title="Trackflow",
               summary="A b2b platform for sharing track demos between labels and producers.",
               version="0.0.1")
+
+app.add_middleware(CORSMiddleware,
+                   allow_origins=["http://localhost:5173",
+                                  "http://trackflow.pl",
+                                  "https://trackflow.pl"],
+                   allow_headers=["*"],
+                   allow_methods=["*"],
+                   allow_credentials=True)
 
 api_router = APIRouter()
 api_router.include_router(router=users.router)
