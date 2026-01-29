@@ -1,14 +1,17 @@
 import { useState } from "react"
 import { Button } from "@/components/retroui/Button"
 import { Input } from "@/components/retroui/Input"
+import useLogin from "@/hooks/useLogin"
 
 function LoginPage() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const loginMutation = useLogin()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Login attempt:", { email, password })
+    console.log("Login attempt:", { username , password })
+    loginMutation.mutate({ username, password})
   }
 
   return (
@@ -22,15 +25,15 @@ function LoginPage() {
           Log in to Trackflow
         </h2>
 
-        <label htmlFor="email" className="block mb-1 font-medium">
-          Email
+        <label htmlFor="username" className="block mb-1 font-medium">
+          Username
         </label>
         <Input
-          id="email"
-          type="email"
-          placeholder="your.email@example.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="username"
+          type="username"
+          placeholder="username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           required
           autoComplete="username"
         />
