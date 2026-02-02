@@ -6,6 +6,8 @@ import { Input } from "@/components/retroui/Input";
 import { Select } from "@/components/retroui/Select";
 import type { Gender, UserType } from "@/models/enums";
 
+import useRegister from "@/hooks/useRegister";
+
 export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -13,7 +15,8 @@ export default function RegisterPage() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [gender, setGender] = useState<Gender | "">("");
-  const [userType, setUserType] = useState<UserType | "">("");
+  const [userType, setUserType] = useState<UserType>("producer");
+  const registerMutation = useRegister();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,6 +29,15 @@ export default function RegisterPage() {
       gender,
       userType,
     });
+    registerMutation.mutate({
+      email,
+      username,
+      password,
+      first_name: firstName,
+      last_name: lastName,
+      gender: gender || undefined,
+      user_type: userType || undefined,
+    })
 
   };
 
