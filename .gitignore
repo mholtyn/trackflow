@@ -11,3 +11,6 @@ wheels/
 
 # Local env
 .env
+
+# Personal AI context - not for public consumption
+ai-docs/dev-profile.md

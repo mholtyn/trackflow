@@ -1,0 +1,20 @@
+---
+description: Backend layering and patterns for FastAPI
+globs: app/**/*.py
+alwaysApply: false
+---
+
+# Backend Architecture & Patterns
+
+- **Layering**
+  - Routers in `app/routers/` are thin: parse params, check auth, delegate to services.
+  - Business logic lives in `app/services/`; never in routers or models.
+  - Models in `app/models/` handle persistence only.
+  - Schemas in `app/schemas/` define request/response contracts.
+
+- **Database access**
+  - Use shared DB utilities from `app/database.py`; no ad-hoc connections.
+  - Services handle transactions and data access, not routers.
+
+- **New features**
+  - Follow: model/schema → service → router.

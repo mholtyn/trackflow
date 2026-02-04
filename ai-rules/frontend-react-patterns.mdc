@@ -1,0 +1,21 @@
+---
+description: React component patterns and structure
+globs: frontend/src/**/*.tsx
+alwaysApply: false
+---
+
+# React Component Patterns
+
+- **Components**
+  - Use functional components with hooks; no class components.
+  - Extract reusable logic into hooks under `frontend/src/hooks/`.
+  - Keep components presentational; move business logic to hooks.
+
+- **Reuse existing UI**
+  - Use components from `frontend/src/components/retroui/` (Button, Input, Select).
+  - Use layout components from `frontend/src/components/layout/`.
+  - Don't introduce new UI libraries without good reason.
+
+- **Structure**
+  - Pages orchestrate data fetching and layout.
+  - Components focus on rendering UI.

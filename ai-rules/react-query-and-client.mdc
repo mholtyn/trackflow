@@ -1,0 +1,19 @@
+---
+description: Data fetching with React Query and generated API client
+globs: frontend/src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Data Fetching & API Client
+
+- **API access**
+  - Use the generated client in `frontend/src/client/**` for all API calls.
+  - No raw `fetch` calls in components or hooks.
+
+- **React Query**
+  - Use `@tanstack/react-query` for server state.
+  - Colocate API calls in custom hooks under `frontend/src/hooks/`.
+  - Handle loading/error states explicitly in components.
+
+- **Pattern**
+  - See existing hooks like `useProducerSubmissions`, `useCurrentUser` for examples.
