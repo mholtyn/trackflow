@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 from app.models.models import Track
 from app.schemas.schemas import TrackCreate, TrackUpdate
@@ -67,9 +67,11 @@ class TrackService:
             raise TrackNotFoundError("Track not found.")
 
         if track.producer_profile_id != self.producer_profile_id:
-            raise TrackForbiddenError("Access denied.")    
+            raise TrackForbiddenError("Access denied.")
 
-        self.session.delete(track)
+        # Use explicit DELETE statement; session.delete(track) + commit() was not
+        # persisting in this AsyncSession + FastAPI yield-session setup.
+        await self.session.execute(delete(Track).where(Track.id == track_id))
         await self.session.commit()
         return
 

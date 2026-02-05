@@ -1,43 +1,72 @@
 import { useState } from "react";
-import { TrackList } from "@/components/tracks/TrackList";
 import { Button } from "@/components/retroui/Button";
+import { TrackList } from "@/components/tracks/TrackList";
+import { TrackFormModal } from "@/components/tracks/TrackFormModal";
 
-interface Track {
-  id: string;
-  title: string;
-  tempo: number;
-  genre: string[];
-  key?: string | null;
-}
+import { useTracks } from "@/hooks/useTracks";
+import { useAddTrack } from "@/hooks/useAddTrack";
+import { useEditTrack } from "@/hooks/useEditTrack";
+import { useDeleteTrack } from "@/hooks/useDeleteTrack";
 
-const dummyTracks: Track[] = [
-  { id: "1", title: "First Track", tempo: 120, genre: ["Pop"], key: "C" },
-  { id: "2", title: "Second Track", tempo: 95, genre: ["Hip-Hop", "Rap"], key: null },
-];
+import type { TrackPublic, TrackCreate, TrackUpdate } from "@/client";
 
 export default function ProducerTracksPage() {
-  const [tracks, setTracks] = useState<Track[]>(dummyTracks);
+  const [modalOpen, setModalOpen] = useState<"add" | "edit" | null>(null);
+  const [editingTrack, setEditingTrack] = useState<TrackPublic | null>(null);
 
-  const handleEdit = (id: string) => {
-    alert(`Edit track ${id} - TODO`);
+  const { data: tracks, isLoading, isError } = useTracks();
+  const addMutation = useAddTrack();
+  const editMutation = useEditTrack();
+  const deleteMutation = useDeleteTrack();
+
+  const handleAdd = (data: TrackCreate) => {
+    addMutation.mutate(data);
   };
 
-  const handleDelete = (id: string) => {
-    setTracks((prev) => prev.filter((t) => t.id !== id));
+  const handleEdit = (trackId: string, data: TrackUpdate) => {
+    editMutation.mutate({ path: { track_id: trackId }, body: data, url: "/api/tracks/{track_id}" });
   };
+
+  const handleDelete = (trackId: string) => {
+    if (!confirm("Delete this track?")) return;
+    deleteMutation.mutate(trackId);
+  };
+
+  const openEdit = (track: TrackPublic) => {
+    setEditingTrack(track);
+    setModalOpen("edit");
+  };
+
+  const closeModal = () => {
+    setModalOpen(null);
+    setEditingTrack(null);
+  };
+
+  if (isLoading) return <div style={{ color: "#64748b", padding: 24 }}>Loading…</div>;
+  if (isError) return <div style={{ color: "#dc2626", padding: 24 }}>Failed to load tracks.</div>;
 
   return (
-    <div>
-      <h1>My Tracks</h1>
-      <TrackList tracks={tracks} onEdit={handleEdit} onDelete={handleDelete} />
-      <Button
-        variant="default"
-        size="md"
-        style={{ marginTop: 16 }}
-        onClick={() => alert("Add track - TODO")}
-      >
-        Add Track
-      </Button>
+    <div style={{ maxWidth: 720, margin: "0 auto" }}>
+      <TrackList
+        tracks={tracks ?? []}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+      />
+      <div style={{ marginTop: 24, display: "flex", gap: 12, flexWrap: "wrap" }}>
+        <Button variant="default" size="md" type="button" onClick={() => setModalOpen("add")}>
+          Add Track
+        </Button>
+      </div>
+
+      <TrackFormModal
+        isOpen={modalOpen !== null}
+        onClose={closeModal}
+        mode={modalOpen === "edit" ? "edit" : "add"}
+        track={modalOpen === "edit" ? editingTrack : null}
+        onSubmitCreate={handleAdd}
+        onSubmitEdit={handleEdit}
+        isPending={addMutation.isPending || editMutation.isPending}
+      />
     </div>
   );
 }

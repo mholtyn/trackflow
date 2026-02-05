@@ -63,6 +63,7 @@ clarify uncertainty before coding, and align suggestions with the rules linked b
 ## Workflow
 - Ask for clarification when requirements are ambiguous; surface 2–3 options when trade-offs matter
 - Update documentation and related rules when introducing new patterns or services
+- **Backend changes (new endpoints, new routes, new service methods, schema/DB changes):** Before making ANY such changes, ask the user if you may proceed and briefly explain why the change is needed. Do not implement backend changes until the user approves.
 
 ## Testing
 [future feature, not implemented yet]
