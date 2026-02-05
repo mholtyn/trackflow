@@ -1,19 +1,14 @@
 import { type ReactNode } from "react";
 import { Button } from "@/components/retroui/Button";
-import { useNavigate, Outlet, Link } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
+import { useLogout } from "@/hooks/useLogout";
 
 interface LabelLayoutProps {
   children?: ReactNode;
 }
 
 export function LabelLayout({ children }: LabelLayoutProps) {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    // TODO: replace with real logout logic (clear auth, redirect)
-    alert("Logging out (dummy)");
-    navigate("/login");
-  };
+  const logout = useLogout();
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -44,7 +39,7 @@ export function LabelLayout({ children }: LabelLayoutProps) {
           </Link>
         </nav>
 
-        <Button variant="secondary" size="md" onClick={handleLogout}>
+        <Button variant="secondary" size="md" onClick={logout}>
           Logout
         </Button>
       </header>

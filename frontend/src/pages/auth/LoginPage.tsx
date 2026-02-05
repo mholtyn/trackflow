@@ -1,17 +1,47 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/retroui/Button"
 import { Input } from "@/components/retroui/Input"
+import { readUserApiMeGet } from "@/client"
 import useLogin from "@/hooks/useLogin"
 
 function LoginPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const loginMutation = useLogin()
+  const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log("Login attempt:", { username , password })
-    loginMutation.mutate({ username, password})
+    console.log("Login attempt:", { username, password })
+
+    loginMutation.mutate(
+      { username, password },
+      {
+        onSuccess: async (token) => {
+          try {
+            const res = await readUserApiMeGet({
+              // Use freshly obtained access token for this request
+              auth: () => token.access_token,
+            })
+
+            const user = res.data
+            if (!user) {
+              console.error("Failed to load user after login")
+              return
+            }
+
+            if (user.user_type === "producer") {
+              navigate("/producer/submissions")
+            } else if (user.user_type === "labelstaff") {
+              navigate("/labelstaff/labels")
+            }
+          } catch (error) {
+            console.error("Failed to load current user for redirect", error)
+          }
+        },
+      },
+    )
   }
 
   return (

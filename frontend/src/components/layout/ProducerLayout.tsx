@@ -1,19 +1,14 @@
 import { type ReactNode } from "react";
 import { Button } from "@/components/retroui/Button";
-import { useNavigate, Outlet, Link } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
+import { useLogout } from "@/hooks/useLogout";
 
 interface ProducerLayoutProps {
   children?: ReactNode;
 }
 
 export function ProducerLayout({ children }: ProducerLayoutProps) {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    // TODO: replace with real logout logic (e.g. clear auth, redirect)
-    alert("Logging out (dummy)");
-    navigate("/login");
-  };
+  const logout = useLogout();
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -49,7 +44,7 @@ export function ProducerLayout({ children }: ProducerLayoutProps) {
           </Link>
         </nav>
 
-        <Button variant="secondary" size="md" onClick={handleLogout}>
+        <Button variant="secondary" size="md" onClick={logout}>
           Logout
         </Button>
       </header>
