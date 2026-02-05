@@ -7,7 +7,7 @@ export function useLogout() {
     const navigate = useNavigate();
 
     function logout() {
-        localStorage.removeItem("access_token")
+        localStorage.removeItem("token")
 
         queryClient.clear()
 

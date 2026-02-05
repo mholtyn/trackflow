@@ -14,3 +14,6 @@ wheels/
 
 # Personal AI context - not for public consumption
 ai-docs/dev-profile.md
+
+# Local dev testing values (id's etc.)
+testing.md
