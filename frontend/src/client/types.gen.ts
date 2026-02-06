@@ -480,6 +480,33 @@ export type UserPublic = {
 export type UserType = 'producer' | 'labelstaff';
 
 /**
+ * UserUpdate
+ */
+export type UserUpdate = {
+    /**
+     * Email
+     */
+    email: string | null;
+    /**
+     * Username
+     */
+    username: string | null;
+    /**
+     * Password
+     */
+    password: string | null;
+    /**
+     * First Name
+     */
+    first_name: string | null;
+    /**
+     * Last Name
+     */
+    last_name: string | null;
+    gender: Gender | null;
+};
+
+/**
  * ValidationError
  */
 export type ValidationError = {
@@ -597,30 +624,46 @@ export type ReadUserApiMeGetResponses = {
 
 export type ReadUserApiMeGetResponse = ReadUserApiMeGetResponses[keyof ReadUserApiMeGetResponses];
 
-export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchData = {
-    body: LabelStaffProfileUpdate;
+export type UpdateUserApiMePatchData = {
+    body: UserUpdate;
     path?: never;
     query?: never;
-    url: '/api/users/me/labelstaff_profile';
+    url: '/api/me';
 };
 
-export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors = {
+export type UpdateUserApiMePatchErrors = {
     /**
      * Validation Error
      */
     422: HttpValidationError;
 };
 
-export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchError = UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors[keyof UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors];
+export type UpdateUserApiMePatchError = UpdateUserApiMePatchErrors[keyof UpdateUserApiMePatchErrors];
 
-export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses = {
+export type UpdateUserApiMePatchResponses = {
     /**
      * Successful Response
      */
-    200: LabelStaffProfilePublic;
+    200: UserPublic;
 };
 
-export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponse = UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses[keyof UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses];
+export type UpdateUserApiMePatchResponse = UpdateUserApiMePatchResponses[keyof UpdateUserApiMePatchResponses];
+
+export type ReadProducerProfileApiUsersMeProducerProfileGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/users/me/producer_profile';
+};
+
+export type ReadProducerProfileApiUsersMeProducerProfileGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: ProducerProfilePublic;
+};
+
+export type ReadProducerProfileApiUsersMeProducerProfileGetResponse = ReadProducerProfileApiUsersMeProducerProfileGetResponses[keyof ReadProducerProfileApiUsersMeProducerProfileGetResponses];
 
 export type UpdateProducerProfileApiUsersMeProducerProfilePatchData = {
     body: ProducerProfileUpdate;
@@ -646,6 +689,47 @@ export type UpdateProducerProfileApiUsersMeProducerProfilePatchResponses = {
 };
 
 export type UpdateProducerProfileApiUsersMeProducerProfilePatchResponse = UpdateProducerProfileApiUsersMeProducerProfilePatchResponses[keyof UpdateProducerProfileApiUsersMeProducerProfilePatchResponses];
+
+export type ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/users/me/labelstaff_profile';
+};
+
+export type ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: LabelStaffProfilePublic;
+};
+
+export type ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetResponse = ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetResponses[keyof ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetResponses];
+
+export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchData = {
+    body: LabelStaffProfileUpdate;
+    path?: never;
+    query?: never;
+    url: '/api/users/me/labelstaff_profile';
+};
+
+export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchError = UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors[keyof UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors];
+
+export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses = {
+    /**
+     * Successful Response
+     */
+    200: LabelStaffProfilePublic;
+};
+
+export type UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponse = UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses[keyof UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses];
 
 export type ListTracksApiTracksGetData = {
     body?: never;

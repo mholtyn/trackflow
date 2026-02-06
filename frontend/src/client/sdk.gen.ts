@@ -2,7 +2,7 @@
 
 import { type Client, type Options as Options2, type TDataShape, urlSearchParamsBodySerializer } from './client';
 import { client } from './client.gen';
-import type { AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostData, AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostErrors, AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostResponses, AddTrackApiTracksPostData, AddTrackApiTracksPostErrors, AddTrackApiTracksPostResponses, CreateSubmissionApiSubmissionsPostData, CreateSubmissionApiSubmissionsPostErrors, CreateSubmissionApiSubmissionsPostResponses, CreateWorkspaceApiWorkspacesPostData, CreateWorkspaceApiWorkspacesPostErrors, CreateWorkspaceApiWorkspacesPostResponses, DeleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDeleteData, DeleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDeleteErrors, DeleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDeleteResponses, DeleteTrackApiTracksTrackIdDeleteData, DeleteTrackApiTracksTrackIdDeleteErrors, DeleteTrackApiTracksTrackIdDeleteResponses, DeleteWorkspaceApiWorkspacesWorkspaceIdDeleteData, DeleteWorkspaceApiWorkspacesWorkspaceIdDeleteErrors, DeleteWorkspaceApiWorkspacesWorkspaceIdDeleteResponses, EditTrackApiTracksTrackIdPatchData, EditTrackApiTracksTrackIdPatchErrors, EditTrackApiTracksTrackIdPatchResponses, ListLabelSubmissionEventsApiWorkspacesWorkspaceIdSubmissionsEventsGetData, ListLabelSubmissionEventsApiWorkspacesWorkspaceIdSubmissionsEventsGetErrors, ListLabelSubmissionEventsApiWorkspacesWorkspaceIdSubmissionsEventsGetResponses, ListLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGetData, ListLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGetErrors, ListLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGetResponses, ListProducerSubmissionEventsApiSubmissionsEventsGetData, ListProducerSubmissionEventsApiSubmissionsEventsGetResponses, ListProducerSubmissionsApiSubmissionsGetData, ListProducerSubmissionsApiSubmissionsGetResponses, ListTracksApiTracksGetData, ListTracksApiTracksGetResponses, ListWorkspacesApiWorkspacesGetData, ListWorkspacesApiWorkspacesGetResponses, LoginUserApiTokenPostData, LoginUserApiTokenPostErrors, LoginUserApiTokenPostResponses, ReadUserApiMeGetData, ReadUserApiMeGetResponses, RegisterApiRegisterPostData, RegisterApiRegisterPostErrors, RegisterApiRegisterPostResponses, RootApiGetData, RootApiGetResponses, TransitionToAcceptedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdAcceptPostData, TransitionToAcceptedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdAcceptPostErrors, TransitionToAcceptedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdAcceptPostResponses, TransitionToInReviewApiWorkspacesWorkspaceIdSubmissionsSubmissionIdStartReviewPostData, TransitionToInReviewApiWorkspacesWorkspaceIdSubmissionsSubmissionIdStartReviewPostErrors, TransitionToInReviewApiWorkspacesWorkspaceIdSubmissionsSubmissionIdStartReviewPostResponses, TransitionToRejectedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdRejectPostData, TransitionToRejectedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdRejectPostErrors, TransitionToRejectedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdRejectPostResponses, TransitionToShortlistedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdShortlistPostData, TransitionToShortlistedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdShortlistPostErrors, TransitionToShortlistedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdShortlistPostResponses, TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostData, TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostErrors, TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostResponses, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchData, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses, UpdateProducerProfileApiUsersMeProducerProfilePatchData, UpdateProducerProfileApiUsersMeProducerProfilePatchErrors, UpdateProducerProfileApiUsersMeProducerProfilePatchResponses, UpdateWorkspaceApiWorkspacesWorkspaceIdPatchData, UpdateWorkspaceApiWorkspacesWorkspaceIdPatchErrors, UpdateWorkspaceApiWorkspacesWorkspaceIdPatchResponses } from './types.gen';
+import type { AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostData, AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostErrors, AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostResponses, AddTrackApiTracksPostData, AddTrackApiTracksPostErrors, AddTrackApiTracksPostResponses, CreateSubmissionApiSubmissionsPostData, CreateSubmissionApiSubmissionsPostErrors, CreateSubmissionApiSubmissionsPostResponses, CreateWorkspaceApiWorkspacesPostData, CreateWorkspaceApiWorkspacesPostErrors, CreateWorkspaceApiWorkspacesPostResponses, DeleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDeleteData, DeleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDeleteErrors, DeleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDeleteResponses, DeleteTrackApiTracksTrackIdDeleteData, DeleteTrackApiTracksTrackIdDeleteErrors, DeleteTrackApiTracksTrackIdDeleteResponses, DeleteWorkspaceApiWorkspacesWorkspaceIdDeleteData, DeleteWorkspaceApiWorkspacesWorkspaceIdDeleteErrors, DeleteWorkspaceApiWorkspacesWorkspaceIdDeleteResponses, EditTrackApiTracksTrackIdPatchData, EditTrackApiTracksTrackIdPatchErrors, EditTrackApiTracksTrackIdPatchResponses, ListLabelSubmissionEventsApiWorkspacesWorkspaceIdSubmissionsEventsGetData, ListLabelSubmissionEventsApiWorkspacesWorkspaceIdSubmissionsEventsGetErrors, ListLabelSubmissionEventsApiWorkspacesWorkspaceIdSubmissionsEventsGetResponses, ListLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGetData, ListLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGetErrors, ListLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGetResponses, ListProducerSubmissionEventsApiSubmissionsEventsGetData, ListProducerSubmissionEventsApiSubmissionsEventsGetResponses, ListProducerSubmissionsApiSubmissionsGetData, ListProducerSubmissionsApiSubmissionsGetResponses, ListTracksApiTracksGetData, ListTracksApiTracksGetResponses, ListWorkspacesApiWorkspacesGetData, ListWorkspacesApiWorkspacesGetResponses, LoginUserApiTokenPostData, LoginUserApiTokenPostErrors, LoginUserApiTokenPostResponses, ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetData, ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetResponses, ReadProducerProfileApiUsersMeProducerProfileGetData, ReadProducerProfileApiUsersMeProducerProfileGetResponses, ReadUserApiMeGetData, ReadUserApiMeGetResponses, RegisterApiRegisterPostData, RegisterApiRegisterPostErrors, RegisterApiRegisterPostResponses, RootApiGetData, RootApiGetResponses, TransitionToAcceptedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdAcceptPostData, TransitionToAcceptedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdAcceptPostErrors, TransitionToAcceptedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdAcceptPostResponses, TransitionToInReviewApiWorkspacesWorkspaceIdSubmissionsSubmissionIdStartReviewPostData, TransitionToInReviewApiWorkspacesWorkspaceIdSubmissionsSubmissionIdStartReviewPostErrors, TransitionToInReviewApiWorkspacesWorkspaceIdSubmissionsSubmissionIdStartReviewPostResponses, TransitionToRejectedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdRejectPostData, TransitionToRejectedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdRejectPostErrors, TransitionToRejectedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdRejectPostResponses, TransitionToShortlistedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdShortlistPostData, TransitionToShortlistedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdShortlistPostErrors, TransitionToShortlistedApiWorkspacesWorkspaceIdSubmissionsSubmissionIdShortlistPostResponses, TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostData, TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostErrors, TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostResponses, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchData, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses, UpdateProducerProfileApiUsersMeProducerProfilePatchData, UpdateProducerProfileApiUsersMeProducerProfilePatchErrors, UpdateProducerProfileApiUsersMeProducerProfilePatchResponses, UpdateUserApiMePatchData, UpdateUserApiMePatchErrors, UpdateUserApiMePatchResponses, UpdateWorkspaceApiWorkspacesWorkspaceIdPatchData, UpdateWorkspaceApiWorkspacesWorkspaceIdPatchErrors, UpdateWorkspaceApiWorkspacesWorkspaceIdPatchResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -59,18 +59,29 @@ export const readUserApiMeGet = <ThrowOnError extends boolean = false>(options?:
 });
 
 /**
- * Update Labelstaff Profile
+ * Update User
  *
- * Update labelstaff profile data
+ * Update user data
  */
-export const updateLabelstaffProfileApiUsersMeLabelstaffProfilePatch = <ThrowOnError extends boolean = false>(options: Options<UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchData, ThrowOnError>) => (options.client ?? client).patch<UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors, ThrowOnError>({
+export const updateUserApiMePatch = <ThrowOnError extends boolean = false>(options: Options<UpdateUserApiMePatchData, ThrowOnError>) => (options.client ?? client).patch<UpdateUserApiMePatchResponses, UpdateUserApiMePatchErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/api/users/me/labelstaff_profile',
+    url: '/api/me',
     ...options,
     headers: {
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * Read Producer Profile
+ *
+ * Read producer profile data
+ */
+export const readProducerProfileApiUsersMeProducerProfileGet = <ThrowOnError extends boolean = false>(options?: Options<ReadProducerProfileApiUsersMeProducerProfileGetData, ThrowOnError>) => (options?.client ?? client).get<ReadProducerProfileApiUsersMeProducerProfileGetResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/users/me/producer_profile',
+    ...options
 });
 
 /**
@@ -81,6 +92,32 @@ export const updateLabelstaffProfileApiUsersMeLabelstaffProfilePatch = <ThrowOnE
 export const updateProducerProfileApiUsersMeProducerProfilePatch = <ThrowOnError extends boolean = false>(options: Options<UpdateProducerProfileApiUsersMeProducerProfilePatchData, ThrowOnError>) => (options.client ?? client).patch<UpdateProducerProfileApiUsersMeProducerProfilePatchResponses, UpdateProducerProfileApiUsersMeProducerProfilePatchErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/users/me/producer_profile',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Read Labelstaff Profile
+ *
+ * Read labelstaff profile data
+ */
+export const readLabelstaffProfileApiUsersMeLabelstaffProfileGet = <ThrowOnError extends boolean = false>(options?: Options<ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetData, ThrowOnError>) => (options?.client ?? client).get<ReadLabelstaffProfileApiUsersMeLabelstaffProfileGetResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/users/me/labelstaff_profile',
+    ...options
+});
+
+/**
+ * Update Labelstaff Profile
+ *
+ * Update labelstaff profile data
+ */
+export const updateLabelstaffProfileApiUsersMeLabelstaffProfilePatch = <ThrowOnError extends boolean = false>(options: Options<UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchData, ThrowOnError>) => (options.client ?? client).patch<UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchResponses, UpdateLabelstaffProfileApiUsersMeLabelstaffProfilePatchErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/users/me/labelstaff_profile',
     ...options,
     headers: {
         'Content-Type': 'application/json',
