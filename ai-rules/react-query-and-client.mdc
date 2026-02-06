@@ -7,8 +7,9 @@ alwaysApply: false
 # Data Fetching & API Client
 
 - **API access**
-  - Use the generated client in `frontend/src/client/**` for all API calls.
+  - Use only the generated client in `frontend/src/client/**` for all API calls. Call the exported SDK functions (e.g. `readUserApiMeGet`, `updateProducerProfileApiUsersMeProducerProfilePatch`); do not use the client instance directly or construct requests by hand.
   - No raw `fetch` calls in components or hooks.
+  - **Never manually create fetches or use the client instance for endpoints.** If a task requires calling an endpoint that has no generated SDK function, do not implement a manual call. Ask the user for permission and assume the OpenAPI/client may need to be updated first; only use the new generated function once it exists.
 
 - **React Query**
   - Use `@tanstack/react-query` for server state.
