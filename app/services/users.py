@@ -170,6 +170,7 @@ class UserService:
 
     
     async def update_user(self, user_id: UUID, data: UserUpdate) -> User:
+        """Update user data except password"""
         result = await self.session.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
 
@@ -177,8 +178,6 @@ class UserService:
             raise UserMissingError("User not found")
 
         update_data = data.model_dump(exclude_unset=True)
-        if "password" in update_data:
-            update_data["pwd_hash"] = self.auth_service.hash_password(update_data.pop("password"))
         for key, value in update_data.items():
             setattr(user, key, value)
 

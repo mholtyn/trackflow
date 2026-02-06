@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from app.schemas.schemas import UserCreate, UserPublic, UserUpdate, Token, LabelStaffProfileUpdate, LabelStaffProfilePublic, ProducerProfilePublic, ProducerProfileUpdate
+from app.schemas.schemas import UserCreate, UserPrivate, UserPublic, UserUpdate, Token, LabelStaffProfileUpdate, LabelStaffProfilePublic, ProducerProfilePublic, ProducerProfileUpdate
 from app.dependencies import CurrentUserDep, UserServiceDep
 from app.services.users import AuthenticationError, PasswordTooWeakError, UserMissingError, UsernameAlreadyTakenError, LabelStaffProfileMissingError, ProducerProfileMissingError
 
@@ -36,14 +36,14 @@ async def login_user(form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     
 
 # ----------------------------- Users ---------------------------------------
-@router.get("/me", status_code=status.HTTP_200_OK, response_model=UserPublic)
-async def read_user(current_user: CurrentUserDep) -> UserPublic:
+@router.get("/me", status_code=status.HTTP_200_OK, response_model=UserPrivate)
+async def read_user(current_user: CurrentUserDep) -> UserPrivate:
     """Read user data"""
     return current_user
 
 
-@router.patch("/me", status_code=status.HTTP_200_OK, response_model=UserPublic)
-async def update_user(user_data: UserUpdate, current_user: CurrentUserDep, user_service: UserServiceDep) -> UserPublic:
+@router.patch("/me", status_code=status.HTTP_200_OK, response_model=UserPrivate)
+async def update_user(user_data: UserUpdate, current_user: CurrentUserDep, user_service: UserServiceDep) -> UserPrivate:
     """Update user data"""
     try:
         updated_user = await user_service.update_user(current_user.id, user_data)

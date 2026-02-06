@@ -28,13 +28,27 @@ class UserPublic(BaseModel):
 
 
 class UserUpdate(BaseModel):
-    email: EmailStr | None
-    username: str | None
-    password: str | None
-    first_name: str | None
-    last_name: str | None
-    gender: Gender | None
-    
+    """Profile fields only; password change is a separate endpoint."""
+    email: EmailStr | None = None
+    username: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    gender: Gender | None = None
+
+
+class UserPrivate(BaseModel):
+    """Current-user view for GET/PATCH /api/me; includes PII, never password."""
+    id: UUID
+    email: EmailStr
+    username: str
+    first_name: str
+    last_name: str
+    gender: Gender | None = None
+    created_at: datetime
+    user_type: UserType
+
+    model_config = {"from_attributes": True}
+
 
 # -------------------- Tokens -----------------------------
 class Token(BaseModel):
