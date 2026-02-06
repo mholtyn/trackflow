@@ -4,7 +4,7 @@ import zxcvbn
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from app.schemas.schemas import UserCreate, ProducerProfileUpdate, LabelStaffProfileUpdate
+from app.schemas.schemas import UserCreate, ProducerProfileUpdate, LabelStaffProfileUpdate, UserUpdate
 from app.models.models import User, LabelStaffProfile, ProducerProfile
 from app.services.auth import AuthService
 
@@ -31,6 +31,11 @@ class LabelStaffProfileMissingError(Exception):
 
 class ProducerProfileMissingError(Exception):
     """Raise when producer profile couldn't be found."""
+    pass
+
+
+class UserMissingError(Exception):
+    """Raise when user couldn't be found."""
     pass
 
 
@@ -146,3 +151,38 @@ class UserService:
                                                contact_email=contact_email)
         self.session.add(labelstaff_profile)
         return labelstaff_profile
+    
+    
+    async def get_producer_profile(self, user_id: UUID) -> ProducerProfile:
+        result = await self.session.execute(select(ProducerProfile).where(ProducerProfile.user_id == user_id))
+        producer_profile = result.scalar_one_or_none()
+        if not producer_profile:
+            raise ProducerProfileMissingError("Producer profile not found")
+        return producer_profile
+    
+
+    async def get_labelstaff_profile(self, user_id: UUID) -> LabelStaffProfile:
+        result = await self.session.execute(select(LabelStaffProfile).where(LabelStaffProfile.user_id == user_id))
+        labelstaff_profile = result.scalar_one_or_none()
+        if not labelstaff_profile:
+            raise LabelStaffProfileMissingError("Labelstaff profile not found")
+        return labelstaff_profile
+
+    
+    async def update_user(self, user_id: UUID, data: UserUpdate) -> User:
+        result = await self.session.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+
+        if not user:
+            raise UserMissingError("User not found")
+
+        update_data = data.model_dump(exclude_unset=True)
+        if "password" in update_data:
+            update_data["pwd_hash"] = self.auth_service.hash_password(update_data.pop("password"))
+        for key, value in update_data.items():
+            setattr(user, key, value)
+
+        await self.session.commit()
+        await self.session.refresh(user)
+
+        return user

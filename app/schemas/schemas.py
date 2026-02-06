@@ -27,6 +27,15 @@ class UserPublic(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class UserUpdate(BaseModel):
+    email: EmailStr | None
+    username: str | None
+    password: str | None
+    first_name: str | None
+    last_name: str | None
+    gender: Gender | None
+    
+
 # -------------------- Tokens -----------------------------
 class Token(BaseModel):
     access_token: str
