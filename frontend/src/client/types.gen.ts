@@ -456,6 +456,40 @@ export type UserCreate = {
 };
 
 /**
+ * UserPrivate
+ *
+ * Current-user view for GET/PATCH /api/me; includes PII, never password.
+ */
+export type UserPrivate = {
+    /**
+     * Id
+     */
+    id: string;
+    /**
+     * Email
+     */
+    email: string;
+    /**
+     * Username
+     */
+    username: string;
+    /**
+     * First Name
+     */
+    first_name: string;
+    /**
+     * Last Name
+     */
+    last_name: string;
+    gender?: Gender | null;
+    /**
+     * Created At
+     */
+    created_at: string;
+    user_type: UserType;
+};
+
+/**
  * UserPublic
  */
 export type UserPublic = {
@@ -481,29 +515,27 @@ export type UserType = 'producer' | 'labelstaff';
 
 /**
  * UserUpdate
+ *
+ * Profile fields only; password change is a separate endpoint.
  */
 export type UserUpdate = {
     /**
      * Email
      */
-    email: string | null;
+    email?: string | null;
     /**
      * Username
      */
-    username: string | null;
-    /**
-     * Password
-     */
-    password: string | null;
+    username?: string | null;
     /**
      * First Name
      */
-    first_name: string | null;
+    first_name?: string | null;
     /**
      * Last Name
      */
-    last_name: string | null;
-    gender: Gender | null;
+    last_name?: string | null;
+    gender?: Gender | null;
 };
 
 /**
@@ -619,7 +651,7 @@ export type ReadUserApiMeGetResponses = {
     /**
      * Successful Response
      */
-    200: UserPublic;
+    200: UserPrivate;
 };
 
 export type ReadUserApiMeGetResponse = ReadUserApiMeGetResponses[keyof ReadUserApiMeGetResponses];
@@ -644,7 +676,7 @@ export type UpdateUserApiMePatchResponses = {
     /**
      * Successful Response
      */
-    200: UserPublic;
+    200: UserPrivate;
 };
 
 export type UpdateUserApiMePatchResponse = UpdateUserApiMePatchResponses[keyof UpdateUserApiMePatchResponses];
