@@ -156,6 +156,12 @@ class MembershipPublic(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class MemebershipMe(BaseModel):
+    role: LabelRole
+
+    model_config = {"from_attributes": True}
+
+
 # -------------------- Submissions -----------------------------
 class SubmissionCreate(BaseModel):
     workspace_id: UUID

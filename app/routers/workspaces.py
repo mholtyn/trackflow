@@ -2,7 +2,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, status, HTTPException, Response
 
-from app.schemas.schemas import WorkspaceCreate, WorkspacePublic, WorkspaceUpdate, MembershipCreate, MembershipPublic
+from app.schemas.schemas import MemebershipMe, WorkspaceCreate, WorkspacePublic, WorkspaceUpdate, MembershipCreate, MembershipPublic
 from app.dependencies import WorkspaceServiceDep, MembershipServiceDep
 from app.services.workspaces import WorkspaceForbiddenError, WorkspaceNotFoundError
 from app.services.memberships import MembershipNotFoundError, MembershipForbiddenError
@@ -81,3 +81,12 @@ async def delete_member(workspace_id: UUID, labelstaff_profile_id: UUID, members
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
     except MembershipForbiddenError as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+
+
+@router.get("/workspaces/{workspace_id}/memberships/me", status_code=status.HTTP_200_OK, response_model=MemebershipMe)
+async def get_my_membership(workspace_id: UUID, membership_service: MembershipServiceDep) -> MemebershipMe:
+    """Read current user's membership (role) in this workspace."""
+    membership = await membership_service.get_membership(workspace_id)
+    if membership is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not a member of this workspace.")
+    return membership

@@ -77,3 +77,11 @@ class MembershipService:
 
         if not member:
             raise MembershipNotFoundError("Membership not found.")
+    
+
+    async def get_membership(self, workspace_id: UUID) -> Membership | None:
+        result = await self.session.execute(select(Membership).where(
+            Membership.labelstaff_profile_id == self.labelstaff_profile_id,
+            Membership.workspace_id == workspace_id
+        ))
+        return result.scalar_one_or_none()
