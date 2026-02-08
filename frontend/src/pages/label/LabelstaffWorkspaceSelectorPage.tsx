@@ -18,7 +18,7 @@ export default function LabelstaffWorkspaceSelectorPage() {
   const navigate = useNavigate();
 
   const selectWorkspace = (id: string) => {
-    navigate(`/labelstaff/workspace/${id}`);
+    navigate(`/labelstaff/labels/${id}`);
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -35,7 +35,7 @@ export default function LabelstaffWorkspaceSelectorPage() {
       {
         onSuccess: (created) => {
           closeModal();
-          navigate(`/labelstaff/workspace/${created.id}`);
+          navigate(`/labelstaff/labels/${created.id}`);
         },
         onError: () => {},
       }
