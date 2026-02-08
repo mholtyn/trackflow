@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/retroui/Button";
 import { useLabelSubmissions } from "@/hooks/useLabelSubmissions";
 import { useLabelSubmissionEvents } from "@/hooks/useLabelSubmissionEvents";
@@ -79,7 +79,17 @@ export default function LabelWorkspacePage() {
     );
 
   return (
-    <div className="max-w-[960px] mx-auto p-6 flex flex-col gap-6 md:flex-row md:gap-8">
+    <div className="max-w-[960px] mx-auto p-6">
+      <div className="flex items-center justify-between gap-4 mb-6">
+        <h1 className="text-2xl font-head font-bold">Workspace</h1>
+        {/* Admin link: show to all; restrict to admin when GET .../memberships/me exists */}
+        <Link to={`/labelstaff/labels/${workspaceId}/admin`}>
+          <Button variant="outline" size="sm">
+            Admin
+          </Button>
+        </Link>
+      </div>
+      <div className="flex flex-col gap-6 md:flex-row md:gap-8">
       {/* Submissions list */}
       <section className={`${sectionStyle} flex-1 min-w-0`}>
         <h2 className="text-lg font-semibold border-b-2 border-black bg-[#f3f3f3] px-5 py-3">
@@ -199,6 +209,7 @@ export default function LabelWorkspacePage() {
           )}
         </div>
       </section>
+      </div>
     </div>
   );
 }
