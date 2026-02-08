@@ -28,6 +28,8 @@ pnpm dev
 
 ### Generate API client
 
+Restart backend if it's currently running, then:
+
 ```bash
 cd frontend
 pnpx @hey-api/openapi-ts -i http://localhost:8000/openapi.json -o src/client
