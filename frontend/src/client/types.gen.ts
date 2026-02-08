@@ -129,6 +129,13 @@ export type MembershipPublic = {
 };
 
 /**
+ * MemebershipMe
+ */
+export type MemebershipMe = {
+    role: LabelRole;
+};
+
+/**
  * ProducerProfilePublic
  */
 export type ProducerProfilePublic = {
@@ -1036,6 +1043,36 @@ export type AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostR
 };
 
 export type AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostResponse = AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostResponses[keyof AddMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPostResponses];
+
+export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workspace Id
+         */
+        workspace_id: string;
+    };
+    query?: never;
+    url: '/api/workspaces/{workspace_id}/memberships/me';
+};
+
+export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetError = GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetErrors[keyof GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetErrors];
+
+export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponses = {
+    /**
+     * Successful Response
+     */
+    200: MemebershipMe;
+};
+
+export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponse = GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponses[keyof GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponses];
 
 export type ListProducerSubmissionsApiSubmissionsGetData = {
     body?: never;
