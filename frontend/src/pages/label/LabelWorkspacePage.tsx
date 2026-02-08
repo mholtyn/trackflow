@@ -9,6 +9,7 @@ import {
   useAccept,
   useReject,
 } from "@/hooks/useLabelSubmissionTransitions";
+import { useWorkspaceMyRole } from "@/hooks/useWorkspaceMyRole";
 import type { SubmissionEventPublic } from "@/client";
 
 const sectionStyle =
@@ -30,10 +31,12 @@ export default function LabelWorkspacePage() {
   const { data: allEvents = [] } = useLabelSubmissionEvents(workspaceId);
   const [selectedSubmissionId, setSelectedSubmissionId] = useState<string | null>(null);
 
+  const { data: myMembership } = useWorkspaceMyRole(workspaceId);
   const startReview = useStartReview(workspaceId);
   const shortlist = useShortlist(workspaceId);
   const accept = useAccept(workspaceId);
   const reject = useReject(workspaceId);
+  const isAdmin = myMembership?.role === "admin";
 
   const selectedSubmission = submissions.find((s) => s.id === selectedSubmissionId) ?? null;
   const eventsForSelected = useMemo(
@@ -82,12 +85,13 @@ export default function LabelWorkspacePage() {
     <div className="max-w-[960px] mx-auto p-6">
       <div className="flex items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-head font-bold">Workspace</h1>
-        {/* Admin link: show to all; restrict to admin when GET .../memberships/me exists */}
-        <Link to={`/labelstaff/labels/${workspaceId}/admin`}>
-          <Button variant="outline" size="sm">
-            Admin
-          </Button>
-        </Link>
+        {isAdmin && (
+          <Link to={`/labelstaff/labels/${workspaceId}/admin`}>
+            <Button variant="outline" size="sm">
+              Admin
+            </Button>
+          </Link>
+        )}
       </div>
       <div className="flex flex-col gap-6 md:flex-row md:gap-8">
       {/* Submissions list */}
