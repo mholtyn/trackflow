@@ -5,6 +5,7 @@ import LabelstaffProfilePage from "@/pages/label/LabelstaffProfilePage";
 import LabelstaffWorkspaceSelectorPage from "@/pages/label/LabelstaffWorkspaceSelectorPage";
 import LabelWorkspacePage from "@/pages/label/LabelWorkspacePage";
 import LabelAdminSettingsPage from "@/pages/label/LabelAdminSettingsPage";
+import { AdminRouteGuard } from "@/app/AdminRouteGuard";
 
 import { ProducerLayout } from "@/components/layout/ProducerLayout";
 import ProducerSubmissionsPage from "@/pages/producer/ProducerSubmissionsPage";
@@ -25,8 +26,8 @@ export const router = createBrowserRouter([
       { path: "labels", element: <LabelstaffWorkspaceSelectorPage /> },
       { path: "labels/workspace", element: <LabelWorkspacePage /> }, // dev
       { path: "labels/:workspaceId", element: <LabelWorkspacePage /> },
-      { path: "labels/workspace/admin", element: <LabelAdminSettingsPage /> }, // dev
-      { path: "labels/:workspaceId/admin", element: <LabelAdminSettingsPage /> },
+      { path: "labels/workspace/admin", element: <AdminRouteGuard><LabelAdminSettingsPage /></AdminRouteGuard> }, // dev
+      { path: "labels/:workspaceId/admin", element: <AdminRouteGuard><LabelAdminSettingsPage /></AdminRouteGuard> },
     ],
   },
   {
