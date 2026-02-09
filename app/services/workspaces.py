@@ -1,10 +1,10 @@
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 
-from app.models.models import Workspace, Membership
+from app.models.models import Membership, Workspace
 from app.schemas.schemas import WorkspaceCreate, WorkspaceUpdate
 
 
@@ -64,7 +64,11 @@ class WorkspaceService:
 
         if not workspace:
             raise WorkspaceNotFoundError("Workspace not found.")
-        self.session.delete(workspace)
+
+        await self.session.execute(
+            delete(Membership).where(Membership.workspace_id == workspace_id)
+        )
+        await self.session.execute(delete(Workspace).where(Workspace.id == workspace_id))
         await self.session.commit()
 
 
