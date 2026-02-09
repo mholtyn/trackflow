@@ -105,6 +105,7 @@ class MembershipService:
 
 
     async def list_memberships(self, workspace_id: UUID) -> list[Membership]:
+        await self._ensure_admin(workspace_id)
         result = await self.session.execute(select(Membership).where(
             Membership.workspace_id == workspace_id
         ))

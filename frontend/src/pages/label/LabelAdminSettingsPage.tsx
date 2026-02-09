@@ -8,6 +8,7 @@ import { useDeleteWorkspace } from "@/hooks/useDeleteWorkspace";
 import {
   useAddWorkspaceMember,
   useRemoveWorkspaceMember,
+  useWorkspaceMembershipsList,
 } from "@/hooks/useWorkspaceMemberships";
 import type { LabelRole } from "@/client";
 
@@ -29,6 +30,8 @@ export default function LabelAdminSettingsPage() {
   const deleteWorkspace = useDeleteWorkspace(workspaceId);
   const addMember = useAddWorkspaceMember(workspaceId);
   const removeMember = useRemoveWorkspaceMember(workspaceId);
+  const { data: memberships = [], isLoading: membershipsLoading } =
+    useWorkspaceMembershipsList(workspaceId);
 
   const workspace = workspaces.find((w) => w.id === workspaceId);
 
@@ -151,17 +154,35 @@ export default function LabelAdminSettingsPage() {
         </div>
       </section>
 
-      {/* Members: list (placeholder until BE provides GET /workspaces/{id}/memberships) */}
+      {/* Members: list */}
       <section className={sectionStyle}>
         <h2 className="text-lg font-semibold border-b-2 border-black bg-[#f3f3f3] px-5 py-3">
           Members
         </h2>
         <div className="p-5">
-          <p className="text-sm text-slate-600">
-            Member list will appear here once the backend exposes a list endpoint (e.g. GET
-            /api/workspaces/:workspaceId/memberships). Use Add member / Remove member below in the
-            meantime.
-          </p>
+          {membershipsLoading ? (
+            <p className="text-sm text-slate-500">Loading members…</p>
+          ) : memberships.length === 0 ? (
+            <p className="text-sm text-slate-600">No members yet. Add one below.</p>
+          ) : (
+            <ul className="list-none p-0 text-sm">
+              {memberships.map((m) => (
+                <li
+                  key={`${m.labelstaff_profile_id}-${m.workspace_id}`}
+                  className="flex items-center justify-between gap-3 py-2 border-b border-slate-200 last:border-b-0"
+                >
+                  <span className="font-mono text-slate-700 truncate" title={m.labelstaff_profile_id}>
+                    {m.labelstaff_profile_id}
+                  </span>
+                  <span
+                    className="shrink-0 px-2 py-0.5 rounded border border-black text-xs font-medium bg-slate-100"
+                  >
+                    {m.role}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </section>
 

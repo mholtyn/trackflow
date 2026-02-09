@@ -1,11 +1,32 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdPost,
   deleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDelete,
+  listMembershipsApiWorkspacesWorkspaceIdMembershipsGet,
   type MembershipCreate,
 } from "@/client";
 import type { MembershipPublic } from "@/client";
 import { workspacesQueryKey } from "./useWorkspaces";
+
+export const workspaceMembershipsQueryKey = (workspaceId: string) => [
+  "workspaces",
+  workspaceId,
+  "memberships",
+];
+
+export function useWorkspaceMembershipsList(workspaceId: string | undefined) {
+  return useQuery<MembershipPublic[]>({
+    queryKey: workspaceMembershipsQueryKey(workspaceId ?? ""),
+    queryFn: async () => {
+      if (!workspaceId) return [];
+      const res = await listMembershipsApiWorkspacesWorkspaceIdMembershipsGet({
+        path: { workspace_id: workspaceId },
+      });
+      return res.data ?? [];
+    },
+    enabled: Boolean(workspaceId),
+  });
+}
 
 export function useAddWorkspaceMember(workspaceId: string | undefined) {
   const queryClient = useQueryClient();
@@ -30,6 +51,11 @@ export function useAddWorkspaceMember(workspaceId: string | undefined) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: workspacesQueryKey });
+      if (workspaceId) {
+        queryClient.invalidateQueries({
+          queryKey: workspaceMembershipsQueryKey(workspaceId),
+        });
+      }
     },
   });
 }
@@ -55,6 +81,11 @@ export function useRemoveWorkspaceMember(workspaceId: string | undefined) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: workspacesQueryKey });
+      if (workspaceId) {
+        queryClient.invalidateQueries({
+          queryKey: workspaceMembershipsQueryKey(workspaceId),
+        });
+      }
     },
   });
 }
