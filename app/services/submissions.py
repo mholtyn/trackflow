@@ -42,10 +42,12 @@ class SubmissionQueryService:
     
     
     async def list_producer_submission_events(self, producer_profile_id: UUID) -> list[SubmissionEvent]:
-        result = await self.session.execute(select(SubmissionEvent).where(SubmissionEvent.producer_profile_id == producer_profile_id))
-        submission_events = result.scalars().all()
-
-        return submission_events
+        result = await self.session.execute(
+            select(SubmissionEvent)
+            .join(Submission, SubmissionEvent.submission_id == Submission.id)
+            .where(Submission.producer_profile_id == producer_profile_id)
+        )
+        return result.scalars().all()
 
 
     async def list_label_submission_events(self, workspace_id: UUID) -> list[SubmissionEvent]:
