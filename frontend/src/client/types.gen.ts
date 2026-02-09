@@ -1078,6 +1078,38 @@ export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponses = {
 
 export type GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponse = GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponses[keyof GetMyMembershipApiWorkspacesWorkspaceIdMembershipsMeGetResponses];
 
+export type ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetData = {
+    body?: never;
+    path: {
+        /**
+         * Workspace Id
+         */
+        workspace_id: string;
+    };
+    query?: never;
+    url: '/api/workspaces/{workspace_id}/memberships';
+};
+
+export type ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetErrors = {
+    /**
+     * Validation Error
+     */
+    422: HttpValidationError;
+};
+
+export type ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetError = ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetErrors[keyof ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetErrors];
+
+export type ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetResponses = {
+    /**
+     * Response List Memberships Api Workspaces  Workspace Id  Memberships Get
+     *
+     * Successful Response
+     */
+    200: Array<MembershipPublic>;
+};
+
+export type ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetResponse = ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetResponses[keyof ListMembershipsApiWorkspacesWorkspaceIdMembershipsGetResponses];
+
 export type ListProducerSubmissionsApiSubmissionsGetData = {
     body?: never;
     path?: never;
