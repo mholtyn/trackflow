@@ -22,6 +22,7 @@ function useTransition(
       if (!workspaceId) throw new Error("Workspace ID required");
       const res = await transitionFn({
         path: { workspace_id: workspaceId, submission_id: submissionId },
+        throwOnError: true,
       });
       if (!res.data) throw new Error("Empty response");
       return res.data;

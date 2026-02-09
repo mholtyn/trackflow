@@ -12,6 +12,20 @@ import {
 import { useWorkspaceMyRole } from "@/hooks/useWorkspaceMyRole";
 import type { SubmissionEventPublic } from "@/client";
 
+/** Allowed transitions from backend: PENDING→IN_REVIEW; IN_REVIEW→SHORTLISTED|ACCEPTED|REJECTED; SHORTLISTED→ACCEPTED|REJECTED */
+function canStartReview(status: string) {
+  return status === "PENDING";
+}
+function canShortlist(status: string) {
+  return status === "IN_REVIEW";
+}
+function canAccept(status: string) {
+  return status === "IN_REVIEW" || status === "SHORTLISTED";
+}
+function canReject(status: string) {
+  return status === "IN_REVIEW" || status === "SHORTLISTED";
+}
+
 const sectionStyle =
   "bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] overflow-hidden";
 const cardStyle =
@@ -134,57 +148,49 @@ export default function LabelWorkspacePage() {
             <>
               <div className="mb-4">
                 <p className="text-sm text-slate-600 mb-2">
-                  Status: <strong>{selectedSubmission.status}</strong>
+                  Status: <strong>{selectedSubmission.status.replace("_", " ")}</strong>
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant={
-                      selectedSubmission.status === "IN_REVIEW"
-                        ? "default"
-                        : "outline"
-                    }
-                    size="sm"
-                    onClick={() => runTransition(startReview, selectedSubmission.id)}
-                    disabled={startReview.isPending}
-                  >
-                    {startReview.isPending ? "…" : "Start review"}
-                  </Button>
-                  <Button
-                    variant={
-                      selectedSubmission.status === "SHORTLISTED"
-                        ? "default"
-                        : "outline"
-                    }
-                    size="sm"
-                    onClick={() => runTransition(shortlist, selectedSubmission.id)}
-                    disabled={shortlist.isPending}
-                  >
-                    {shortlist.isPending ? "…" : "Shortlist"}
-                  </Button>
-                  <Button
-                    variant={
-                      selectedSubmission.status === "ACCEPTED"
-                        ? "default"
-                        : "outline"
-                    }
-                    size="sm"
-                    onClick={() => runTransition(accept, selectedSubmission.id)}
-                    disabled={accept.isPending}
-                  >
-                    {accept.isPending ? "…" : "Accept"}
-                  </Button>
-                  <Button
-                    variant={
-                      selectedSubmission.status === "REJECTED"
-                        ? "default"
-                        : "outline"
-                    }
-                    size="sm"
-                    onClick={() => runTransition(reject, selectedSubmission.id)}
-                    disabled={reject.isPending}
-                  >
-                    {reject.isPending ? "…" : "Reject"}
-                  </Button>
+                  {canStartReview(selectedSubmission.status) && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => runTransition(startReview, selectedSubmission.id)}
+                      disabled={startReview.isPending}
+                    >
+                      {startReview.isPending ? "…" : "Start review"}
+                    </Button>
+                  )}
+                  {canShortlist(selectedSubmission.status) && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => runTransition(shortlist, selectedSubmission.id)}
+                      disabled={shortlist.isPending}
+                    >
+                      {shortlist.isPending ? "…" : "Shortlist"}
+                    </Button>
+                  )}
+                  {canAccept(selectedSubmission.status) && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => runTransition(accept, selectedSubmission.id)}
+                      disabled={accept.isPending}
+                    >
+                      {accept.isPending ? "…" : "Accept"}
+                    </Button>
+                  )}
+                  {canReject(selectedSubmission.status) && (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => runTransition(reject, selectedSubmission.id)}
+                      disabled={reject.isPending}
+                    >
+                      {reject.isPending ? "…" : "Reject"}
+                    </Button>
+                  )}
                 </div>
               </div>
 

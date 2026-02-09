@@ -17,7 +17,8 @@ export function useLabelSubmissions(workspaceId: string | undefined) {
         await listLabelSubmissionsApiWorkspacesWorkspaceIdSubmissionsGet({
           path: { workspace_id: workspaceId },
         });
-      return res.data ?? [];
+      const list = res.data ?? [];
+      return list.filter((s) => s.status !== "WITHDRAWN");
     },
     enabled: Boolean(workspaceId),
   });
