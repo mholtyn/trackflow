@@ -102,3 +102,10 @@ class MembershipService:
             Membership.workspace_id == workspace_id
         ))
         return result.scalar_one_or_none()
+
+
+    async def list_memberships(self, workspace_id: UUID) -> list[Membership]:
+        result = await self.session.execute(select(Membership).where(
+            Membership.workspace_id == workspace_id
+        ))
+        return result.scalars().all()

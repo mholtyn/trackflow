@@ -92,3 +92,10 @@ async def get_my_membership(workspace_id: UUID, membership_service: MembershipSe
     if membership is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not a member of this workspace.")
     return membership
+
+
+@router.get("/workspaces/{workspace_id}/memberships", status_code=status.HTTP_200_OK, response_model=list[MembershipPublic])
+async def list_memberships(workspace_id: UUID, membership_service: MembershipServiceDep) -> list[MembershipPublic]:
+    """List all memberships in this workspace."""
+    memberships = await membership_service.list_memberships(workspace_id)
+    return memberships
