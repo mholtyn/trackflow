@@ -122,9 +122,13 @@ export type MembershipCreate = {
  */
 export type MembershipPublic = {
     /**
-     * Id
+     * Labelstaff Profile Id
      */
-    id: string;
+    labelstaff_profile_id: string;
+    /**
+     * Workspace Id
+     */
+    workspace_id: string;
     role: LabelRole;
 };
 

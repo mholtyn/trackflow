@@ -150,7 +150,8 @@ class MembershipCreate(BaseModel):
 
 
 class MembershipPublic(BaseModel):
-    id: UUID
+    labelstaff_profile_id: UUID
+    workspace_id: UUID
     role: LabelRole
 
     model_config = {"from_attributes": True}
