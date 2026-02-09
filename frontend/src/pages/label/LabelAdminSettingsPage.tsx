@@ -151,6 +151,20 @@ export default function LabelAdminSettingsPage() {
         </div>
       </section>
 
+      {/* Members: list (placeholder until BE provides GET /workspaces/{id}/memberships) */}
+      <section className={sectionStyle}>
+        <h2 className="text-lg font-semibold border-b-2 border-black bg-[#f3f3f3] px-5 py-3">
+          Members
+        </h2>
+        <div className="p-5">
+          <p className="text-sm text-slate-600">
+            Member list will appear here once the backend exposes a list endpoint (e.g. GET
+            /api/workspaces/:workspaceId/memberships). Use Add member / Remove member below in the
+            meantime.
+          </p>
+        </div>
+      </section>
+
       {/* Members: add */}
       <section className={sectionStyle}>
         <h2 className="text-lg font-semibold border-b-2 border-black bg-[#f3f3f3] px-5 py-3">
@@ -195,7 +209,12 @@ export default function LabelAdminSettingsPage() {
           </div>
           {addMember.isError && (
             <p className="mt-2 text-red-600 text-sm">
-              Failed to add member. Check the ID and try again.
+              {addMember.error &&
+              typeof addMember.error === "object" &&
+              "detail" in addMember.error &&
+              typeof (addMember.error as { detail: unknown }).detail === "string"
+                ? (addMember.error as { detail: string }).detail
+                : "Failed to add member. The ID may be wrong (must be a label staff profile UUID), or they may already be a member of this label."}
             </p>
           )}
         </div>
@@ -221,6 +240,7 @@ export default function LabelAdminSettingsPage() {
               />
             </div>
             <Button
+              type="button"
               variant="outline"
               size="md"
               onClick={handleRemoveMember}
@@ -231,7 +251,12 @@ export default function LabelAdminSettingsPage() {
           </div>
           {removeMember.isError && (
             <p className="mt-2 text-red-600 text-sm">
-              Failed to remove. Check the ID and try again.
+              {removeMember.error &&
+              typeof removeMember.error === "object" &&
+              "detail" in removeMember.error &&
+              typeof (removeMember.error as { detail: unknown }).detail === "string"
+                ? (removeMember.error as { detail: string }).detail
+                : "Failed to remove member. Check the label staff profile ID and try again."}
             </p>
           )}
         </div>

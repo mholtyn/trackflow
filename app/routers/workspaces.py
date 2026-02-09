@@ -5,7 +5,7 @@ from fastapi import APIRouter, status, HTTPException, Response
 from app.schemas.schemas import MemebershipMe, WorkspaceCreate, WorkspacePublic, WorkspaceUpdate, MembershipCreate, MembershipPublic
 from app.dependencies import WorkspaceServiceDep, MembershipServiceDep
 from app.services.workspaces import WorkspaceForbiddenError, WorkspaceNotFoundError
-from app.services.memberships import MembershipNotFoundError, MembershipForbiddenError
+from app.services.memberships import LabelStaffProfileNotFoundError, MembershipForbiddenError, MembershipNotFoundError
 
 
 router = APIRouter(tags=["Workspaces and Memberships"])
@@ -69,6 +69,8 @@ async def add_member(member_role: MembershipCreate,
         return new_member
     except MembershipForbiddenError as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(e))
+    except LabelStaffProfileNotFoundError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
 @router.delete("/workspaces/{workspace_id}/memberships/{labelstaff_profile_id}", status_code=status.HTTP_204_NO_CONTENT)
