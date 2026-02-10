@@ -1,11 +1,21 @@
-## DEV
+## DEV Instructions
+### Prerequisites
+You need to set up a local PostgreSQL database (best if you use the native OS install or Docker).
 
-### Start server
+#### Instructions for OS PostgreSQL
+0. install PostgreSQL on your OS [link](https://www.postgresql.org/download/)
+1. open your terminal
+2. run `psql -U [your_username] -d postgres`
+3. in the interactive terminal run `CREATE DATABASE [your_local_db_name];`
+4. set the connection string in `.env` according to [.env.example](.env.example)
+
+
+### Start backend server
 
 Install `uv` [link](https://docs.astral.sh/uv/getting-started/installation/)
 
 ```bash
-uv sync # install depedencies - if needed
+uv sync # install dependencies - if needed
 uv run uvicorn app:main.app --host 0.0.0.0 --port 8000
 ```
 alternatively run (must be inside root)
@@ -15,13 +25,13 @@ uv run python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 Check API documentation at [link](http://0.0.0.0:8000/docs)
 
 
-### Start frontend
+### Start frontend server
 
 Install `pnpm` [link](https://pnpm.io/installation)
 
 ```bash
 cd frontend
-pnpm install # install deps if needed
+pnpm install # install dependencies if needed
 pnpm dev
 ```
 
