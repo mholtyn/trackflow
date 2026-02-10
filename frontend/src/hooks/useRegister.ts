@@ -23,7 +23,7 @@ function useRegister() {
             return res.data
         },
 
-        onSuccess: (data) => {
+        onSuccess: () => {
             navigate("/login")
         },
 

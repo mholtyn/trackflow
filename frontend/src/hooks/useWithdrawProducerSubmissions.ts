@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
+import {
   transitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPost,
-  type TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostData 
+  type TransitionToWithdrawnApiSubmissionsSubmissionIdWithdrawPostData,
 } from "@/client";
+import type { SubmissionPublic } from "@/client";
 import { producerSubmissionsQueryKey } from "./useProducerSubmissions";
 
 /**
@@ -29,7 +30,7 @@ export function useWithdrawProducerSubmission() {
 
       const previousSubmissions = queryClient.getQueryData(producerSubmissionsQueryKey);
 
-      queryClient.setQueryData(producerSubmissionsQueryKey, (old: any) => {
+      queryClient.setQueryData(producerSubmissionsQueryKey, (old: SubmissionPublic[] | undefined) => {
         if (Array.isArray(old)) {
           return old.map((s) =>
             s.id === submissionId ? { ...s, status: "WITHDRAWN" } : s
@@ -41,7 +42,7 @@ export function useWithdrawProducerSubmission() {
       return { previousSubmissions };
     },
 
-    onError: (err, variables, context) => {
+    onError: (err, _variables, context) => {
       if (context?.previousSubmissions) {
         queryClient.setQueryData(producerSubmissionsQueryKey, context.previousSubmissions);
       }

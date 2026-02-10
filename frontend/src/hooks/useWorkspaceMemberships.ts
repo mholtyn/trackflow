@@ -66,11 +66,8 @@ export function useRemoveWorkspaceMember(workspaceId: string | undefined) {
   return useMutation({
     mutationFn: async (labelstaffProfileId: string) => {
       if (!workspaceId) throw new Error("Workspace ID required");
-      // Build URL explicitly so DELETE is sent to the correct endpoint (path substitution can fail with some client configs)
-      const url = `/api/workspaces/${workspaceId}/memberships/${labelstaffProfileId}`;
       await deleteMemberApiWorkspacesWorkspaceIdMembershipsLabelstaffProfileIdDelete(
         {
-          url,
           path: {
             workspace_id: workspaceId,
             labelstaff_profile_id: labelstaffProfileId,

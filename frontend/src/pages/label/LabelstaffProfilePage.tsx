@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/retroui/Button";
 import { Input } from "@/components/retroui/Input";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -69,26 +69,23 @@ const GENDER_OPTIONS: { value: string; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-export default function LabelstaffProfilePage() {
-  const { data: user, isLoading: userLoading } = useCurrentUser();
-  const { data: profile, isLoading: profileLoading } = useLabelstaffProfile();
-  const updateProfile = useUpdateLabelstaffProfile();
-  const updateUser = useUpdateUser();
-
+function LabelstaffProfileForm({
+  user,
+  profile,
+  updateUser,
+  updateProfile,
+}: {
+  user: ReturnType<typeof useCurrentUser>["data"];
+  profile: ReturnType<typeof useLabelstaffProfile>["data"];
+  updateUser: ReturnType<typeof useUpdateUser>;
+  updateProfile: ReturnType<typeof useUpdateLabelstaffProfile>;
+}) {
   const [accountForm, setAccountForm] = useState<UserUpdate>(() =>
     toAccountForm(user ?? null)
   );
   const [form, setForm] = useState<LabelStaffProfileUpdate>(() =>
     toFormProfile(profile ?? null)
   );
-
-  useEffect(() => {
-    setAccountForm(toAccountForm(user ?? null));
-  }, [user]);
-
-  useEffect(() => {
-    setForm(toFormProfile(profile ?? null));
-  }, [profile]);
 
   const handleAccountChange = (field: keyof UserUpdate, value: string | null) => {
     setAccountForm((prev) => ({ ...prev, [field]: value }));
@@ -111,14 +108,6 @@ export default function LabelstaffProfilePage() {
       onError: () => {},
     });
   };
-
-  const isLoading = userLoading || profileLoading;
-  if (isLoading)
-    return (
-      <div className="max-w-[720px] mx-auto p-6 text-slate-500">
-        Loading profile…
-      </div>
-    );
 
   return (
     <div className="max-w-[720px] mx-auto p-6 space-y-6">
@@ -285,5 +274,30 @@ export default function LabelstaffProfilePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function LabelstaffProfilePage() {
+  const { data: user, isLoading: userLoading } = useCurrentUser();
+  const { data: profile, isLoading: profileLoading } = useLabelstaffProfile();
+  const updateProfile = useUpdateLabelstaffProfile();
+  const updateUser = useUpdateUser();
+
+  const isLoading = userLoading || profileLoading;
+  if (isLoading)
+    return (
+      <div className="max-w-[720px] mx-auto p-6 text-slate-500">
+        Loading profile…
+      </div>
+    );
+
+  return (
+    <LabelstaffProfileForm
+      key={`${user?.id ?? ""}-${profile ? "loaded" : ""}`}
+      user={user}
+      profile={profile}
+      updateUser={updateUser}
+      updateProfile={updateProfile}
+    />
   );
 }

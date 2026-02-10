@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/retroui/Button";
 import type { TrackPublic, TrackCreate, TrackUpdate } from "@/client";
 
@@ -28,34 +28,35 @@ const emptyForm = {
   key: "" as string | null,
 };
 
-export function TrackFormModal({
-  isOpen,
-  onClose,
+function getInitialForm(mode: "add" | "edit", track?: TrackPublic | null) {
+  if (mode === "edit" && track) {
+    return {
+      title: track.title ?? "",
+      streaming_url: track.streaming_url ?? "",
+      tempo: track.tempo ?? 0,
+      genre: track.genre ?? [],
+      key: track.key ?? "",
+    };
+  }
+  return emptyForm;
+}
+
+function TrackFormModalContent({
   mode,
   track,
+  onClose,
   onSubmitCreate,
   onSubmitEdit,
-  isPending = false,
-}: TrackFormModalProps) {
-  const [form, setForm] = useState(emptyForm);
-
-  useEffect(() => {
-    if (!isOpen) {
-      setForm(emptyForm);
-      return;
-    }
-    if (mode === "edit" && track) {
-      setForm({
-        title: track.title ?? "",
-        streaming_url: track.streaming_url ?? "",
-        tempo: track.tempo ?? 0,
-        genre: track.genre ?? [],
-        key: track.key ?? "",
-      });
-    } else {
-      setForm(emptyForm);
-    }
-  }, [isOpen, mode, track]);
+  isPending,
+}: {
+  mode: "add" | "edit";
+  track?: TrackPublic | null;
+  onClose: () => void;
+  onSubmitCreate: (data: TrackCreate) => void;
+  onSubmitEdit: (trackId: string, data: TrackUpdate) => void;
+  isPending: boolean;
+}) {
+  const [form, setForm] = useState(() => getInitialForm(mode, track));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,8 +85,6 @@ export function TrackFormModal({
       onClose();
     }
   };
-
-  if (!isOpen) return null;
 
   return (
     <div
@@ -204,5 +203,28 @@ export function TrackFormModal({
         </form>
       </div>
     </div>
+  );
+}
+
+export function TrackFormModal({
+  isOpen,
+  onClose,
+  mode,
+  track,
+  onSubmitCreate,
+  onSubmitEdit,
+  isPending = false,
+}: TrackFormModalProps) {
+  if (!isOpen) return null;
+  return (
+    <TrackFormModalContent
+      key={`${mode}-${track?.id ?? "new"}`}
+      mode={mode}
+      track={track}
+      onClose={onClose}
+      onSubmitCreate={onSubmitCreate}
+      onSubmitEdit={onSubmitEdit}
+      isPending={isPending}
+    />
   );
 }

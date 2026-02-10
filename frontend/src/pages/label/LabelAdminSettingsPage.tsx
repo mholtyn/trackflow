@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/retroui/Button";
 import { Input } from "@/components/retroui/Input";
@@ -11,6 +11,7 @@ import {
   useWorkspaceMembershipsList,
 } from "@/hooks/useWorkspaceMemberships";
 import type { LabelRole } from "@/client";
+import type { WorkspacePublic } from "@/client";
 
 const sectionStyle =
   "bg-white border-2 border-black shadow-[4px_4px_0_0_rgba(0,0,0,1)] overflow-hidden";
@@ -21,6 +22,58 @@ const LABEL_ROLE_OPTIONS: { value: LabelRole; label: string }[] = [
   { value: "admin", label: "Admin" },
   { value: "agent", label: "Agent" },
 ];
+
+function WorkspaceNameSection({
+  workspace,
+  updateWorkspace,
+}: {
+  workspace: WorkspacePublic;
+  updateWorkspace: ReturnType<typeof useUpdateWorkspace>;
+}) {
+  const [name, setName] = useState(workspace.name);
+  const handleSaveName = () => {
+    if (!name.trim()) return;
+    updateWorkspace.mutate(
+      { name: name.trim() },
+      { onError: () => {} }
+    );
+  };
+  return (
+    <section className={sectionStyle}>
+      <h2 className="text-lg font-semibold border-b-2 border-black bg-[#f3f3f3] px-5 py-3">
+        Label details
+      </h2>
+      <div className="p-5">
+        <div className={fieldStyle}>
+          <label className={labelStyle} htmlFor="workspace-name">
+            Label name
+          </label>
+          <Input
+            id="workspace-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        {updateWorkspace.isError && (
+          <p className="mb-4 text-red-600 text-sm">
+            Failed to save. Please try again.
+          </p>
+        )}
+        {updateWorkspace.isSuccess && (
+          <p className="mb-4 text-green-700 text-sm">Saved.</p>
+        )}
+        <Button
+          variant="default"
+          size="md"
+          onClick={handleSaveName}
+          disabled={updateWorkspace.isPending}
+        >
+          {updateWorkspace.isPending ? "Saving…" : "Save name"}
+        </Button>
+      </div>
+    </section>
+  );
+}
 
 export default function LabelAdminSettingsPage() {
   const { workspaceId } = useParams<{ workspaceId: string }>();
@@ -35,23 +88,10 @@ export default function LabelAdminSettingsPage() {
 
   const workspace = workspaces.find((w) => w.id === workspaceId);
 
-  const [name, setName] = useState("");
   const [removeProfileId, setRemoveProfileId] = useState("");
   const [addProfileId, setAddProfileId] = useState("");
   const [addRole, setAddRole] = useState<LabelRole>("agent");
   const [confirmDelete, setConfirmDelete] = useState(false);
-
-  useEffect(() => {
-    if (workspace) setName(workspace.name);
-  }, [workspace]);
-
-  const handleSaveName = () => {
-    if (!name.trim()) return;
-    updateWorkspace.mutate(
-      { name: name.trim() },
-      { onError: () => {} }
-    );
-  };
 
   const handleDeleteWorkspace = () => {
     if (!confirmDelete) return;
@@ -120,39 +160,7 @@ export default function LabelAdminSettingsPage() {
       </div>
 
       {/* Workspace name */}
-      <section className={sectionStyle}>
-        <h2 className="text-lg font-semibold border-b-2 border-black bg-[#f3f3f3] px-5 py-3">
-          Label details
-        </h2>
-        <div className="p-5">
-          <div className={fieldStyle}>
-            <label className={labelStyle} htmlFor="workspace-name">
-              Label name
-            </label>
-            <Input
-              id="workspace-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          {updateWorkspace.isError && (
-            <p className="mb-4 text-red-600 text-sm">
-              Failed to save. Please try again.
-            </p>
-          )}
-          {updateWorkspace.isSuccess && (
-            <p className="mb-4 text-green-700 text-sm">Saved.</p>
-          )}
-          <Button
-            variant="default"
-            size="md"
-            onClick={handleSaveName}
-            disabled={updateWorkspace.isPending}
-          >
-            {updateWorkspace.isPending ? "Saving…" : "Save name"}
-          </Button>
-        </div>
-      </section>
+      <WorkspaceNameSection key={workspace.id} workspace={workspace} updateWorkspace={updateWorkspace} />
 
       {/* Members: list */}
       <section className={sectionStyle}>

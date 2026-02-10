@@ -13,7 +13,7 @@ function useTransition(
   workspaceId: string | undefined,
   transitionFn: (params: {
     path: { workspace_id: string; submission_id: string };
-  }) => Promise<{ data: SubmissionPublic | undefined }>
+  }) => Promise<{ data?: SubmissionPublic; error?: unknown }>
 ) {
   const queryClient = useQueryClient();
 
@@ -22,12 +22,12 @@ function useTransition(
       if (!workspaceId) throw new Error("Workspace ID required");
       const res = await transitionFn({
         path: { workspace_id: workspaceId, submission_id: submissionId },
-        throwOnError: true,
       });
+      if (res.error) throw new Error(JSON.stringify(res.error));
       if (!res.data) throw new Error("Empty response");
       return res.data;
     },
-    onSuccess: (_data, _variables, _context) => {
+    onSuccess: () => {
       if (workspaceId) {
         queryClient.invalidateQueries({
           queryKey: labelSubmissionsQueryKey(workspaceId),

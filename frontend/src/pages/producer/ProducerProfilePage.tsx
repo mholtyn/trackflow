@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/retroui/Button";
 import { Input } from "@/components/retroui/Input";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -63,26 +63,23 @@ const GENDER_OPTIONS: { value: string; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-export default function ProducerProfilePage() {
-  const { data: user, isLoading: userLoading } = useCurrentUser();
-  const { data: profile, isLoading: profileLoading } = useProducerProfile();
-  const updateProfile = useUpdateProducerProfile();
-  const updateUser = useUpdateUser();
-
+function ProducerProfileForm({
+  user,
+  profile,
+  updateUser,
+  updateProfile,
+}: {
+  user: ReturnType<typeof useCurrentUser>["data"];
+  profile: ReturnType<typeof useProducerProfile>["data"];
+  updateUser: ReturnType<typeof useUpdateUser>;
+  updateProfile: ReturnType<typeof useUpdateProducerProfile>;
+}) {
   const [accountForm, setAccountForm] = useState<UserUpdate>(() =>
     toAccountForm(user ?? null)
   );
   const [form, setForm] = useState<ProducerProfileUpdate>(() =>
     toFormProfile(profile ?? null)
   );
-
-  useEffect(() => {
-    setAccountForm(toAccountForm(user ?? null));
-  }, [user]);
-
-  useEffect(() => {
-    setForm(toFormProfile(profile ?? null));
-  }, [profile]);
 
   const handleAccountChange = (field: keyof UserUpdate, value: string | null) => {
     setAccountForm((prev) => ({ ...prev, [field]: value }));
@@ -105,14 +102,6 @@ export default function ProducerProfilePage() {
       onError: () => {},
     });
   };
-
-  const isLoading = userLoading || profileLoading;
-  if (isLoading)
-    return (
-      <div className="max-w-[720px] mx-auto p-6 text-slate-500">
-        Loading profile…
-      </div>
-    );
 
   return (
     <div className="max-w-[720px] mx-auto p-6 space-y-6">
@@ -297,5 +286,30 @@ export default function ProducerProfilePage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ProducerProfilePage() {
+  const { data: user, isLoading: userLoading } = useCurrentUser();
+  const { data: profile, isLoading: profileLoading } = useProducerProfile();
+  const updateProfile = useUpdateProducerProfile();
+  const updateUser = useUpdateUser();
+
+  const isLoading = userLoading || profileLoading;
+  if (isLoading)
+    return (
+      <div className="max-w-[720px] mx-auto p-6 text-slate-500">
+        Loading profile…
+      </div>
+    );
+
+  return (
+    <ProducerProfileForm
+      key={`${user?.id ?? ""}-${profile ? "loaded" : ""}`}
+      user={user}
+      profile={profile}
+      updateUser={updateUser}
+      updateProfile={updateProfile}
+    />
   );
 }
