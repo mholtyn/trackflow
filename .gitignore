@@ -17,3 +17,9 @@ ai-docs/dev-profile.md
 
 # Local dev testing values (id's etc.)
 testing.md
+
+# Pytest cache
+.pytest_cache/
+
+# Ruff cache
+.ruff_cache/

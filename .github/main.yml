@@ -1,0 +1,51 @@
+name: Trackflow CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v4
+      with: 
+        python-version: "3.12"
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v4
+    - name: Install dependencies
+      run: uv sync --frozen --all-extras
+    - name: Ruff check
+      run: uv run ruff check .
+    - name: Run tests
+      run: uv run pytest
+    
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "22"
+    - name: Set up pnpm
+      uses: pnpm/action-setup@v4
+    - name: Install dependencies
+      run: |
+        cd frontend
+        pnpm install --frozen-lockfile
+    - name: Lint
+      run: |
+        cd frontend
+        pnpm lint
+    - name: Build
+      run: |
+        cd frontend
+        pnpm build
