@@ -1,5 +1,6 @@
 from fastapi import FastAPI, status, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.routers import users
 from app.routers import tracks
@@ -10,12 +11,12 @@ from app.database import init_db
 
 app = FastAPI(title="Trackflow",
               summary="A b2b platform for sharing track demos between labels and producers.",
-              version="0.0.1")
+              version="1.0.0")
 
 app.add_middleware(CORSMiddleware,
                    allow_origins=["http://localhost:5173",
-                                  "http://trackflow.pl",
-                                  "https://trackflow.pl"],
+                                  "http://trackflow-app.pl",
+                                  "https://trackflow-app.pl"],
                    allow_headers=["*"],
                    allow_methods=["*"],
                    allow_credentials=True)
@@ -34,6 +35,12 @@ async def root():
 
 app.include_router(router=api_router, prefix="/api")
 
+try:
+    app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
+except RuntimeError as e:
+    print(
+        f"Warning: Could not mount static files directory 'frontend/dist'. Ensure it exists. Error: {e}"
+    )
 
 @app.on_event("startup")
 async def init_database() -> None:

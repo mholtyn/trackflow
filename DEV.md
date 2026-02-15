@@ -53,3 +53,15 @@ To run backend tests (from repo root; also ensure `TEST_DATABASE_URL` is set in 
 ```bash
 uv run pytest
 ```
+
+
+### Deploy
+Install `flyctl` [link](https://fly.io/docs/flyctl/install/)
+
+```bash
+# Build the frontend first
+cd frontend
+VITE_API_URL=https://trackflow-app.pl pnpm build
+cd ..
+fly deploy
+```
