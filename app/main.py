@@ -1,12 +1,19 @@
+from pathlib import Path
+
 from fastapi import FastAPI, status, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.routers import users
 from app.routers import tracks
 from app.routers import workspaces
 from app.routers import submissions
 from app.database import init_db
+
+
+STATIC_DIR = Path("frontend/dist")
+INDEX_PATH = STATIC_DIR / "index.html"
 
 
 app = FastAPI(title="Trackflow",
@@ -35,12 +42,16 @@ async def root():
 
 app.include_router(router=api_router, prefix="/api")
 
-try:
-    app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
-except RuntimeError as e:
-    print(
-        f"Warning: Could not mount static files directory 'frontend/dist'. Ensure it exists. Error: {e}"
-    )
+
+@app.get("/{full_path:path}")
+async def serve_spa(full_path: str) -> FileResponse:
+    """Serve static files from frontend/dist; fallback to index.html for SPA routes."""
+    if not INDEX_PATH.exists():
+        raise RuntimeError("frontend/dist/index.html not found. Build the frontend before running.")
+    file_path = (STATIC_DIR / full_path).resolve()
+    if file_path.is_file() and file_path.resolve().is_relative_to(STATIC_DIR.resolve()):
+        return FileResponse(file_path)
+    return FileResponse(INDEX_PATH)
 
 @app.on_event("startup")
 async def init_database() -> None:
