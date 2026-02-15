@@ -1,6 +1,8 @@
 # Trackflow
 Trackflow is a B2B platform for managing music demo submissions as structured, event-driven workflows, instead of email threads and links.
 
+> **Portfolio project** — built to practice full-stack and deployment; not actively developed.
+
 ## The problem
 ### For producers
 Submitting demos to labels is often a one-sided process. Tracks are sent via email or third-party platforms, with no visibility into whether they were reviewed, ignored, or rejected. Producers are left manually tracking submissions across inboxes, SoundCloud links, and spreadsheets.
@@ -51,7 +53,7 @@ At the current MVP stage, Trackflow is intentionally minimal.
 - `pytest`
 
 ### Deploy
-TBA
+- **Fly.io** (app + static frontend), **Neon** (PostgreSQL). Custom domain.
 
 
 
@@ -68,12 +70,12 @@ Described in detail in
  
 
 ## Live demo
-TBA
+[https://trackflow-app.pl](https://trackflow-app.pl)
 
 
 ## Screenshots
 TBA
 
 
-#### Last update: 10/02/2026
-#### Document version: v1.1
+#### Last update: 15/02/2026
+#### Document version: v1.2
