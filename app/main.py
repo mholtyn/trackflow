@@ -3,7 +3,6 @@ from pathlib import Path
 from fastapi import FastAPI, status, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.routers import users
 from app.routers import tracks
